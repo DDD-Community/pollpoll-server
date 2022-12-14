@@ -4,6 +4,10 @@ include(
     "pollpoll-api"
 )
 
+include(
+    "support:logging"
+)
+
 pluginManagement {
     val kotlinVersion: String by settings
     val springBootVersion: String by settings

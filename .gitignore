@@ -1,3 +1,7 @@
+### CUSTOM ###
+logs/
+
+### DEFAULT ###
 HELP.md
 .gradle
 build/

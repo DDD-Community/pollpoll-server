@@ -5,6 +5,7 @@ plugins {
     id("io.spring.dependency-management")
     kotlin("jvm")
     kotlin("plugin.spring")
+    kotlin("plugin.jpa")
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_11
@@ -24,6 +25,7 @@ allprojects {
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jetbrains.kotlin.plugin.spring")
+    apply(plugin = "org.jetbrains.kotlin.plugin.jpa")
     apply(plugin = "org.springframework.boot")
     apply(plugin = "io.spring.dependency-management")
 

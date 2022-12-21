@@ -1,4 +1,4 @@
-package com.ddd.polllpoll.domain.common
+package com.ddd.pollpoll.domain.common
 
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp

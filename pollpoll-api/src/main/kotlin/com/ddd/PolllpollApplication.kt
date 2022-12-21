@@ -1,4 +1,4 @@
-package com.ddd.polllpoll
+package com.ddd
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

@@ -1,4 +1,4 @@
-package com.ddd.polllpoll.config
+package com.ddd.pollpoll.config
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource

@@ -1,11 +1,16 @@
-rootProject.name = "polllpoll"
+rootProject.name = "pollpoll"
 
 include(
-    "pollpoll-api"
+    "pollpoll-api",
+    "pollpoll-core"
 )
 
 include(
     "support:logging"
+)
+
+include(
+    "storage:db-pollpoll"
 )
 
 pluginManagement {

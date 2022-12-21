@@ -1,6 +1,6 @@
-package com.ddd.polllpoll.domain.user
+package com.ddd.pollpoll.domain.account
 
-import com.ddd.polllpoll.domain.common.BaseEntity
+import com.ddd.pollpoll.domain.common.BaseEntity
 import javax.persistence.Entity
 
 @Entity

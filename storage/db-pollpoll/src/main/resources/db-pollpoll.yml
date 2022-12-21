@@ -1,24 +1,32 @@
 spring:
-  application:
-    name: pollpoll-api
-  profiles:
-    active: local
   jpa:
     open-in-view: false
     hibernate:
       ddl-auto: none
     properties:
       hibernate.default_batch_fetch_size: 100
-  config:
-    import:
-      - logging.yml
-      - db-pollpoll.yml
 
 ---
 spring:
   config:
     activate:
       on-profile: local
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+  h2:
+    console:
+      enabled: true
+
+pollpoll:
+  datasource:
+    driver-class-name: org.h2.Driver
+    jdbc-url: jdbc:h2:tcp://localhost/~/pollpoll
+    username: sa
 
 ---
 spring:
@@ -31,9 +39,3 @@ spring:
   config:
     activate:
       on-profile: prod
-
-springdoc:
-  api-docs:
-    enabled: false
-  swagger-ui:
-    enabled: false

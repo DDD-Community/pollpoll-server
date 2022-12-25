@@ -1,9 +1,11 @@
-package com.ddd.pollpoll.domain.account
+package com.ddd.pollpoll.domain.user
 
 import com.ddd.pollpoll.domain.common.BaseEntity
 import javax.persistence.Entity
+import javax.persistence.Table
 
+@Table(name = "users")
 @Entity
-internal class Account(
+class User(
     val name: String
 ) : BaseEntity()

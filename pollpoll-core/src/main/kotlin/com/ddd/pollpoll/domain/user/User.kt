@@ -7,5 +7,6 @@ import javax.persistence.Table
 @Table(name = "users")
 @Entity
 class User(
-    val name: String
+    val name: String,
+    val socialId: String
 ) : BaseEntity()

@@ -1,6 +1,6 @@
 package com.ddd.pollpoll.filter
 
-import com.ddd.pollpoll.util.JwtUtil
+import com.ddd.pollpoll.util.extractJwtSubject
 import org.apache.commons.lang3.StringUtils
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -29,7 +29,7 @@ class JwtRequestFilter : OncePerRequestFilter() {
 
         if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
             val accessToken = authorizationHeader.substring(TOKEN_PREFIX.length)
-            val subject = JwtUtil.extractSubject(accessToken)
+            val subject = extractJwtSubject(accessToken)
             val authorities = listOf(SimpleGrantedAuthority("USER"))
             val principal = User(subject, StringUtils.EMPTY, authorities)
 

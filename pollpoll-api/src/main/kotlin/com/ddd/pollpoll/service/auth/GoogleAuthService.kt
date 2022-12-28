@@ -5,7 +5,7 @@ import com.ddd.pollpoll.controller.auth.dto.AuthRequest
 import com.ddd.pollpoll.controller.auth.dto.AuthResponse
 import com.ddd.pollpoll.domain.user.User
 import com.ddd.pollpoll.repository.user.UserRepository
-import com.ddd.pollpoll.util.JwtUtil
+import com.ddd.pollpoll.util.createJwt
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -25,7 +25,7 @@ class GoogleAuthService(
         if (user == null) {
             userRepository.save(googleUser.toUser())
         }
-        val accessToken: String = JwtUtil.createToken(socialId)
+        val accessToken: String = createJwt(socialId)
         return AuthResponse(accessToken)
     }
 }

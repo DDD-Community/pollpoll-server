@@ -33,6 +33,20 @@ spring:
   config:
     activate:
       on-profile: dev
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+
+pollpoll:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    jdbc-url: jdbc:mysql://pollpoll-db.cyjkezgnl82v.ap-northeast-2.rds.amazonaws.com:3306/pollpoll-dev
+    username: root
+    password: t1e2s3t4
 
 ---
 spring:

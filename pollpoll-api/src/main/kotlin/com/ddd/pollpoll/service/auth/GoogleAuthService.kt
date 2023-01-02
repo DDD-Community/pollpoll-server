@@ -1,6 +1,6 @@
 package com.ddd.pollpoll.service.auth
 
-import GoogleUser
+import com.ddd.pollpoll.client.GoogleClient
 import com.ddd.pollpoll.controller.auth.dto.AuthRequest
 import com.ddd.pollpoll.controller.auth.dto.AuthResponse
 import com.ddd.pollpoll.domain.user.User
@@ -12,20 +12,19 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 @Service
 class GoogleAuthService(
-//    private val googleClient: GoogleClient,
+    private val googleClient: GoogleClient,
     private val userRepository: UserRepository
 ) {
     @Transactional
     fun login(authRequest: AuthRequest): AuthResponse {
-//        val googleUser: GoogleUser = googleClient.getUser(authRequest.accessToken)
-        val googleUser = GoogleUser("test", "1")
-        val socialId: String = googleUser.socialId
+        val tokenInfoDto = googleClient.getTokenInfo(authRequest.idToken)
+        val socialId = tokenInfoDto.socialId
 
         val user: User? = userRepository.findBySocialId(socialId)
         if (user == null) {
-            userRepository.save(googleUser.toUser())
+            userRepository.save(tokenInfoDto.toUser())
         }
-        val accessToken: String = createJwt(socialId)
+        val accessToken = createJwt(socialId)
         return AuthResponse(accessToken)
     }
 }

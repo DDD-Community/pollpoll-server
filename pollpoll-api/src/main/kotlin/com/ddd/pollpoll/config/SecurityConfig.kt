@@ -21,12 +21,12 @@ class SecurityConfig(private val jwtRequestFilter: JwtRequestFilter) {
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/",
-            "/callback",
         )
 
         val WHITELIST_HTTP_URL: Array<String> = arrayOf(
             "/api/auth/**",
             "/health",
+            "/callback",
         )
     }
 

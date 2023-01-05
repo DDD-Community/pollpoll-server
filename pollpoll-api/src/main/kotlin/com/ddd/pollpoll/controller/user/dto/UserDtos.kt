@@ -1,3 +1,5 @@
 package com.ddd.pollpoll.controller.user.dto
 
-data class UpdateUserDto(val nickname: String)
+data class UpdateNicknameRequest(val nickname: String)
+
+data class HasNicknameResponse(val hasNickname: Boolean)

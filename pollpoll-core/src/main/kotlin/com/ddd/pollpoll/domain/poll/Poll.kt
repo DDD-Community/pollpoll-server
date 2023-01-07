@@ -3,6 +3,7 @@ package com.ddd.pollpoll.domain.poll
 import com.ddd.pollpoll.domain.common.BaseEntity
 import com.ddd.pollpoll.domain.post.Post
 import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
@@ -22,7 +23,25 @@ class Poll(
     val isMultipleChoice: Boolean,
     val startAt: LocalDateTime,
     val endAt: LocalDateTime,
-) : BaseEntity()
+) : BaseEntity() {
+    companion object {
+        fun of(
+            post: Post,
+            isMultipleChoice: Boolean,
+            milliseconds: Long
+        ): Poll {
+            val startAt = LocalDateTime.now()
+            val minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds)
+            return Poll(
+                post = post,
+                status = Status.IN_PROGRESS,
+                isMultipleChoice = isMultipleChoice,
+                startAt = startAt,
+                endAt = startAt.plusMinutes(minutes)
+            )
+        }
+    }
+}
 
 enum class Status(val description: String) {
     IN_PROGRESS("진행중"),

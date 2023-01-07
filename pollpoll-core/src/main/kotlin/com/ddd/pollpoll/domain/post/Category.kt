@@ -9,5 +9,5 @@ import javax.persistence.Table
 class Category(
     val name: String,
     val imageUrl: String,
-    val order: Int,
+    val sequence: Int,
 ) : BaseEntity()

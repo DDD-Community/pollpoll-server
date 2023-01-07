@@ -7,5 +7,7 @@ import javax.persistence.Table
 @Table(name = "category")
 @Entity
 class Category(
-    val name: String
+    val name: String,
+    val imageUrl: String,
+    val order: Int,
 ) : BaseEntity()

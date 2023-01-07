@@ -17,8 +17,10 @@ class Poll(
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     val post: Post,
+    val title: String,
     @Enumerated(value = EnumType.STRING)
     val status: Status,
+    val isMultipleChoice: Boolean,
     val startAt: LocalDateTime,
     val endAt: LocalDateTime,
 ) : BaseEntity()

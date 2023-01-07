@@ -18,6 +18,7 @@ class CategoryController(
     @Operation(summary = "카테고리 목록")
     @GetMapping
     fun getCategories(): SuccessResponse<CategoryResponses> {
-        return SuccessResponse(categoryService.getCategories())
+        val categories = categoryService.getCategories()
+        return SuccessResponse(categories.toResponse())
     }
 }

@@ -16,8 +16,10 @@ import com.ddd.pollpoll.repository.poll.PollWatcherRepository
 import com.ddd.pollpoll.repository.post.PostRepository
 import com.ddd.pollpoll.service.category.CategoryService
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.ZoneId
 
+@Transactional(readOnly = true)
 @Service
 class PostService(
     private val categoryService: CategoryService,
@@ -27,15 +29,12 @@ class PostService(
     private val pollParticipantRepository: PollParticipantRepository,
     private val pollWatcherRepository: PollWatcherRepository,
 ) {
+    @Transactional
     fun create(socialId: String, dto: CreatePostRequest) {
         val category = categoryService.getCategory(dto.categoryId)
         val post = Post(category = category, title = dto.title, contents = dto.contents)
-
-        val pollDto = dto.pollDto
-        val poll = Poll.of(post = post, isMultipleChoice = pollDto.multipleChoice, milliseconds = pollDto.milliseconds)
-
-        val pollItemDtos = pollDto.pollItemDtos
-        val pollItems = getPollItems(pollItemDtos, poll)
+        val poll = Poll.of(post = post, isMultipleChoice = dto.multipleChoice, milliseconds = dto.milliseconds)
+        val pollItems = getPollItems(dto.pollItems, poll)
 
         postRepository.save(post)
         pollRepository.save(poll)

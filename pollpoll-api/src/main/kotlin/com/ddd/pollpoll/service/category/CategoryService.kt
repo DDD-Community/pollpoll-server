@@ -5,7 +5,9 @@ import com.ddd.pollpoll.domain.post.Category
 import com.ddd.pollpoll.repository.category.CategoryRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
+@Transactional(readOnly = true)
 @Service
 class CategoryService(
     private val categoryRepository: CategoryRepository

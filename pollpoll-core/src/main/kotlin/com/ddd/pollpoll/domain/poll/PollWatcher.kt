@@ -8,16 +8,13 @@ import javax.persistence.JoinColumn
 import javax.persistence.OneToOne
 import javax.persistence.Table
 
-@Table(name = "poll_participation")
+@Table(name = "poll_watcher")
 @Entity
-class PollParticipation(
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    val user: User,
+class PollWatcher(
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "poll_id")
     val poll: Poll,
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "poll_item_id")
-    val pollItem: PollItem
+    @JoinColumn(name = "user_id")
+    val user: User,
 ) : BaseEntity()

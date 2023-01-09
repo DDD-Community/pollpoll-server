@@ -18,8 +18,6 @@ class Poll(
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     val post: Post,
-    @Enumerated(value = EnumType.STRING)
-    val status: Status,
     val isMultipleChoice: Boolean,
     val startAt: LocalDateTime,
     val endAt: LocalDateTime,
@@ -34,16 +32,10 @@ class Poll(
             val minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds)
             return Poll(
                 post = post,
-                status = Status.IN_PROGRESS,
                 isMultipleChoice = isMultipleChoice,
                 startAt = startAt,
                 endAt = startAt.plusMinutes(minutes)
             )
         }
     }
-}
-
-enum class Status(val description: String) {
-    IN_PROGRESS("진행중"),
-    DONE("완료")
 }

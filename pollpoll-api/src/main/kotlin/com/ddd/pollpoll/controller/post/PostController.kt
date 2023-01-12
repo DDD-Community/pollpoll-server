@@ -2,12 +2,14 @@ package com.ddd.pollpoll.controller.post
 
 import com.ddd.pollpoll.controller.SuccessResponse
 import com.ddd.pollpoll.controller.post.dto.CreatePostRequest
+import com.ddd.pollpoll.controller.post.dto.PostPollResponse2
 import com.ddd.pollpoll.controller.post.dto.PostPollResponses
 import com.ddd.pollpoll.service.post.PostService
 import com.ddd.pollpoll.util.getSocialId
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
@@ -35,5 +37,11 @@ class PostController(
     @GetMapping
     fun getPosts(@RequestParam lastPostId: Long): SuccessResponse<PostPollResponses> {
         return SuccessResponse(postService.getShowMoreList(lastPostId))
+    }
+
+    @Operation(summary = "게시글 단건 조회")
+    @GetMapping("/{postId}")
+    fun getPost(@PathVariable postId: Long): SuccessResponse<PostPollResponse2> {
+        return SuccessResponse(postService.getPost(postId))
     }
 }

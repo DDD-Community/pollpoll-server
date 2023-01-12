@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface PollWatcherRepository : JpaRepository<PollWatcher, Long>, PollWatcherQueryDslRepository
+interface PollWatcherRepository : JpaRepository<PollWatcher, Long>, PollWatcherQueryDslRepository {
+    fun countByPoll_Id(pollId: Long): Int
+}

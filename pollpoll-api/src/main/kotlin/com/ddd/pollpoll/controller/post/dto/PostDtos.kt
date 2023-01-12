@@ -31,3 +31,18 @@ data class PostPollResponse(
     val participantCount: Int,
     val watcherCount: Int,
 )
+
+data class PostPollResponse2(
+    val postId: Long,
+    val title: String,
+    val contents: String,
+    val postCreatedAt: Long?,
+    val postHits: Int?,
+    val nickname: String?,
+    val categoryName: String,
+    val pollId: Long,
+    val pollEndAt: Long,
+    val pollItemCount: Int,
+    val participantCount: Int,
+    val watcherCount: Int,
+)

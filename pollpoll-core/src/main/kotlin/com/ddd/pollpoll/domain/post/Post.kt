@@ -1,16 +1,21 @@
 package com.ddd.pollpoll.domain.post
 
 import com.ddd.pollpoll.domain.common.BaseEntity
+import com.ddd.pollpoll.domain.user.User
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 import javax.persistence.OneToOne
 import javax.persistence.Table
 
 @Table(name = "post")
 @Entity
 class Post(
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    val user: User,
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     val category: Category,

@@ -3,12 +3,9 @@ package com.ddd.pollpoll.service.post
 import com.ddd.pollpoll.controller.post.dto.CreatePostRequest
 import com.ddd.pollpoll.controller.post.dto.PollItemDto
 import com.ddd.pollpoll.controller.post.dto.PostPollResponse
-import com.ddd.pollpoll.controller.post.dto.PostPollResponse2
 import com.ddd.pollpoll.controller.post.dto.PostPollResponses
 import com.ddd.pollpoll.domain.poll.Poll
 import com.ddd.pollpoll.domain.poll.PollItem
-import com.ddd.pollpoll.domain.poll.PollParticipant
-import com.ddd.pollpoll.domain.poll.PollWatcher
 import com.ddd.pollpoll.domain.post.Post
 import com.ddd.pollpoll.repository.poll.PollItemRepository
 import com.ddd.pollpoll.repository.poll.PollParticipantRepository
@@ -17,14 +14,16 @@ import com.ddd.pollpoll.repository.poll.PollWatcherRepository
 import com.ddd.pollpoll.repository.post.PostRepository
 import com.ddd.pollpoll.repository.user.UserRepository
 import com.ddd.pollpoll.service.category.CategoryService
+import com.ddd.pollpoll.service.poll.PollService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.ZoneId
 
 @Transactional(readOnly = true)
 @Service
 class PostService(
     private val categoryService: CategoryService,
+    private val pollService: PollService,
+
     private val userRepository: UserRepository,
     private val postRepository: PostRepository,
     private val pollRepository: PollRepository,
@@ -56,57 +55,29 @@ class PostService(
     }
 
     fun getShowMoreList(lastPostId: Long): PostPollResponses {
-        val postPollDtos = postRepository.findByLastPostId(lastPostId)
-        val pollIds = postPollDtos.map { it.pollId }
-        val pollParticipants = getPollParticipants(pollIds)
-        val pollWatchers = getPollWatchers(pollIds)
+        val postDtos = postRepository.getPostsByLastPostId(lastPostId)
+        val postIds = postDtos.map { it.postId }
+        val pollDtos = pollRepository.getPollsByPostIds(postIds)
+        val pollIds = pollDtos.map { it.pollId }
+        val pollParticipants = pollService.getPollParticipantsByPollIds(pollIds)
+        val pollWatchers = pollService.getPollWatchersByPollIds(pollIds)
 
-        val responses = postPollDtos.map {
-            val participantCount = pollParticipants[it.pollId]?.size ?: 0
-            val watcherCount = pollWatchers[it.pollId]?.size ?: 0
+        val responses = postDtos.map {
+            val pollDto = pollDtos.first { pollDto -> pollDto.postId == it.postId }
+            val participantCount = pollParticipants[pollDto.pollId]?.size ?: 0
+            val watcherCount = pollWatchers[pollDto.pollId]?.size ?: 0
 
-            PostPollResponse(
-                postId = it.postId,
-                title = it.postTitle,
-                contents = it.postContents,
-                pollEndAt = it.pollEndAt.atZone(ZoneId.of("Asia/Seoul")).toInstant()?.toEpochMilli() ?: 0,
-                pollItemCount = it.pollItemCount,
-                participantCount = participantCount,
-                watcherCount = watcherCount,
-            )
+            PostPollResponse.of(it, pollDto, participantCount, watcherCount)
         }
         return PostPollResponses(responses)
     }
 
-    private fun getPollParticipants(pollIds: List<Long>): Map<Long, List<PollParticipant>> {
-        val participants = pollParticipantRepository.findByPollIds(pollIds)
-        return participants.groupBy { it.poll.id }
-    }
-
-    private fun getPollWatchers(pollIds: List<Long>): Map<Long, List<PollWatcher>> {
-        val watchers = pollWatcherRepository.findByPollIds(pollIds)
-        return watchers.groupBy { it.poll.id }
-    }
-
-    fun getPost(postId: Long): PostPollResponse2 {
+    fun getPost(postId: Long): PostPollResponse {
         val postDto = postRepository.getPostById(postId) ?: throw RuntimeException("존재하지 않는 게시글입니다.")
         val pollDto = pollRepository.getPollByPostId(postId) ?: throw RuntimeException("존재하지 않는 투표입니다.")
         val participantCount = pollParticipantRepository.countByPoll_Id(pollDto.pollId)
         val watcherCount = pollWatcherRepository.countByPoll_Id(pollDto.pollId)
 
-        return PostPollResponse2(
-            postId = postDto.postId,
-            title = postDto.postTitle,
-            contents = postDto.postContents,
-            postCreatedAt = postDto.postCreatedAt.atZone(ZoneId.of("Asia/Seoul")).toInstant()?.toEpochMilli() ?: 0,
-            postHits = postDto.postHits,
-            nickname = postDto.nickname,
-            categoryName = postDto.categoryName,
-            pollId = pollDto.pollId,
-            pollEndAt = pollDto.pollEndAt.atZone(ZoneId.of("Asia/Seoul")).toInstant()?.toEpochMilli() ?: 0,
-            pollItemCount = pollDto.pollItemCount,
-            participantCount = participantCount,
-            watcherCount = watcherCount
-        )
+        return PostPollResponse.of(postDto, pollDto, participantCount, watcherCount)
     }
 }

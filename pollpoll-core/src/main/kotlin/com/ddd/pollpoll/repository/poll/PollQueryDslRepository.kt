@@ -8,6 +8,7 @@ import java.time.LocalDateTime
 
 interface PollQueryDslRepository {
     fun getPollByPostId(postId: Long): PollDto?
+    fun getPollsByPostIds(postIds: List<Long>): List<PollDto>
 }
 
 class PollQueryDslRepositoryImpl(
@@ -17,6 +18,7 @@ class PollQueryDslRepositoryImpl(
         return jpaQueryFactory
             .select(
                 QPollDto(
+                    poll.post.id,
                     poll.id,
                     poll.endAt,
                     pollItem.count().intValue()
@@ -28,9 +30,27 @@ class PollQueryDslRepositoryImpl(
             .groupBy(poll.id)
             .fetchOne()
     }
+
+    override fun getPollsByPostIds(postIds: List<Long>): List<PollDto> {
+        return jpaQueryFactory
+            .select(
+                QPollDto(
+                    poll.post.id,
+                    poll.id,
+                    poll.endAt,
+                    pollItem.count().intValue()
+                )
+            )
+            .from(poll)
+            .innerJoin(pollItem).on(pollItem.poll.id.eq(poll.id))
+            .where(poll.post.id.`in`(postIds))
+            .groupBy(poll.id)
+            .fetch()
+    }
 }
 
 data class PollDto @QueryProjection constructor(
+    val postId: Long,
     val pollId: Long,
     val pollEndAt: LocalDateTime,
     val pollItemCount: Int,

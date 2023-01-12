@@ -1,7 +1,5 @@
 package com.ddd.pollpoll.repository.post
 
-import com.ddd.pollpoll.domain.poll.QPoll.poll
-import com.ddd.pollpoll.domain.poll.QPollItem.pollItem
 import com.ddd.pollpoll.domain.post.QCategory.category
 import com.ddd.pollpoll.domain.post.QPost.post
 import com.ddd.pollpoll.domain.post.QPostHits.postHits
@@ -11,30 +9,30 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 import java.time.LocalDateTime
 
 interface PostQueryDslRepository {
-
-    fun findByLastPostId(postId: Long): List<PostPollDto>
+    fun getPostsByLastPostId(postId: Long): List<PostDto>
     fun getPostById(postId: Long): PostDto?
 }
 
 class PostQueryDslRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) : PostQueryDslRepository {
 
-    override fun findByLastPostId(postId: Long): List<PostPollDto> {
+    override fun getPostsByLastPostId(postId: Long): List<PostDto> {
         return jpaQueryFactory
             .select(
-                QPostPollDto(
+                QPostDto(
                     post.id,
                     post.title,
                     post.contents,
-                    poll.id,
-                    poll.endAt,
-                    pollItem.count().intValue()
+                    post.createdAt,
+                    postHits.count().intValue(),
+                    user.nickname,
+                    category.name
                 )
             )
-            .from(pollItem)
-            .innerJoin(pollItem.poll, poll)
-            .innerJoin(poll.post, post)
+            .from(post)
+            .innerJoin(post.user, user)
+            .innerJoin(post.category, category)
+            .leftJoin(postHits).on(postHits.post.id.eq(post.id))
             .where(post.id.lt(postId))
-            .groupBy(poll.id)
             .orderBy(post.id.desc())
             .limit(2)
             .fetch()
@@ -71,13 +69,4 @@ data class PostDto @QueryProjection constructor(
     val postHits: Int,
     val nickname: String,
     val categoryName: String,
-)
-
-data class PostPollDto @QueryProjection constructor(
-    val postId: Long,
-    val postTitle: String,
-    val postContents: String,
-    val pollId: Long,
-    val pollEndAt: LocalDateTime,
-    val pollItemCount: Int,
 )

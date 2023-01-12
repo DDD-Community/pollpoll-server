@@ -2,7 +2,7 @@ package com.ddd.pollpoll.controller.post
 
 import com.ddd.pollpoll.controller.SuccessResponse
 import com.ddd.pollpoll.controller.post.dto.CreatePostRequest
-import com.ddd.pollpoll.controller.post.dto.PostPollResponse2
+import com.ddd.pollpoll.controller.post.dto.PostPollResponse
 import com.ddd.pollpoll.controller.post.dto.PostPollResponses
 import com.ddd.pollpoll.service.post.PostService
 import com.ddd.pollpoll.util.getSocialId
@@ -41,7 +41,7 @@ class PostController(
 
     @Operation(summary = "게시글 단건 조회")
     @GetMapping("/{postId}")
-    fun getPost(@PathVariable postId: Long): SuccessResponse<PostPollResponse2> {
+    fun getPost(@PathVariable postId: Long): SuccessResponse<PostPollResponse> {
         return SuccessResponse(postService.getPost(postId))
     }
 }

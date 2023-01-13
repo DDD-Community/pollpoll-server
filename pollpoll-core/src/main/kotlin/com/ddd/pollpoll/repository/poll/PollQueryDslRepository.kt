@@ -7,14 +7,14 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 import java.time.LocalDateTime
 
 interface PollQueryDslRepository {
-    fun getPollByPostId(postId: Long): PollDto?
-    fun getPollsByPostIds(postIds: List<Long>): List<PollDto>
+    fun getOneByPostId(postId: Long): PollDto?
+    fun getListByPostIds(postIds: List<Long>): List<PollDto>
 }
 
 class PollQueryDslRepositoryImpl(
     private val jpaQueryFactory: JPAQueryFactory
 ) : PollQueryDslRepository {
-    override fun getPollByPostId(postId: Long): PollDto? {
+    override fun getOneByPostId(postId: Long): PollDto? {
         return jpaQueryFactory
             .select(
                 QPollDto(
@@ -31,7 +31,7 @@ class PollQueryDslRepositoryImpl(
             .fetchOne()
     }
 
-    override fun getPollsByPostIds(postIds: List<Long>): List<PollDto> {
+    override fun getListByPostIds(postIds: List<Long>): List<PollDto> {
         return jpaQueryFactory
             .select(
                 QPollDto(

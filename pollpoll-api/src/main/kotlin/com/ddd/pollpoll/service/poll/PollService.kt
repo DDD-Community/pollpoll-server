@@ -14,12 +14,12 @@ class PollService(
     private val pollWatcherRepository: PollWatcherRepository,
 ) {
     fun getPollParticipantsByPollIds(pollIds: List<Long>): Map<Long, List<PollParticipant>> {
-        val participants = pollParticipantRepository.getByPollIds(pollIds)
+        val participants = pollParticipantRepository.getListByPollIds(pollIds)
         return participants.groupBy { it.poll.id }
     }
 
     fun getPollWatchersByPollIds(pollIds: List<Long>): Map<Long, List<PollWatcher>> {
-        val watchers = pollWatcherRepository.getByPollIds(pollIds)
+        val watchers = pollWatcherRepository.getListByPollIds(pollIds)
         return watchers.groupBy { it.poll.id }
     }
 }

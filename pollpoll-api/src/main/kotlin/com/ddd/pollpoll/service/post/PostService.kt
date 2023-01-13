@@ -55,9 +55,9 @@ class PostService(
     }
 
     fun getShowMoreList(lastPostId: Long): PostPollResponses {
-        val postDtos = postRepository.getPostsByLastPostId(lastPostId)
+        val postDtos = postRepository.getListByLastPostId(lastPostId)
         val postIds = postDtos.map { it.postId }
-        val pollDtos = pollRepository.getPollsByPostIds(postIds)
+        val pollDtos = pollRepository.getListByPostIds(postIds)
         val pollIds = pollDtos.map { it.pollId }
         val pollParticipants = pollService.getPollParticipantsByPollIds(pollIds)
         val pollWatchers = pollService.getPollWatchersByPollIds(pollIds)
@@ -73,8 +73,8 @@ class PostService(
     }
 
     fun getPost(postId: Long): PostPollResponse {
-        val postDto = postRepository.getPostById(postId) ?: throw RuntimeException("존재하지 않는 게시글입니다.")
-        val pollDto = pollRepository.getPollByPostId(postId) ?: throw RuntimeException("존재하지 않는 투표입니다.")
+        val postDto = postRepository.getOneById(postId) ?: throw RuntimeException("존재하지 않는 게시글입니다.")
+        val pollDto = pollRepository.getOneByPostId(postId) ?: throw RuntimeException("존재하지 않는 투표입니다.")
         val participantCount = pollParticipantRepository.countByPoll_Id(pollDto.pollId)
         val watcherCount = pollWatcherRepository.countByPoll_Id(pollDto.pollId)
 

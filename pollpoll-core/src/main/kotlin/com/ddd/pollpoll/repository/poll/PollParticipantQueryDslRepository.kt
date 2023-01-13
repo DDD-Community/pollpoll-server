@@ -5,13 +5,13 @@ import com.ddd.pollpoll.domain.poll.QPollParticipant.pollParticipant
 import com.querydsl.jpa.impl.JPAQueryFactory
 
 interface PollParticipantQueryDslRepository {
-    fun getByPollIds(pollIds: List<Long>): List<PollParticipant>
+    fun getListByPollIds(pollIds: List<Long>): List<PollParticipant>
 }
 
 class PollParticipantQueryDslRepositoryImpl(
     private val jpaQueryFactory: JPAQueryFactory
 ) : PollParticipantQueryDslRepository {
-    override fun getByPollIds(pollIds: List<Long>): List<PollParticipant> {
+    override fun getListByPollIds(pollIds: List<Long>): List<PollParticipant> {
         return jpaQueryFactory
             .selectFrom(pollParticipant)
             .where(pollParticipant.poll.id.`in`(pollIds))

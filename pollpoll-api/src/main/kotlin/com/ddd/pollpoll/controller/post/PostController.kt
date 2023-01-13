@@ -4,7 +4,8 @@ import com.ddd.pollpoll.controller.SuccessResponse
 import com.ddd.pollpoll.controller.post.dto.CreatePostRequest
 import com.ddd.pollpoll.controller.post.dto.PostPollResponse
 import com.ddd.pollpoll.controller.post.dto.PostPollResponses
-import com.ddd.pollpoll.service.post.PostService
+import com.ddd.pollpoll.service.post.PostCommandService
+import com.ddd.pollpoll.service.post.PostQueryService
 import com.ddd.pollpoll.util.getSocialId
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -21,7 +22,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/posts")
 @RestController
 class PostController(
-    private val postService: PostService
+    private val postCommandService: PostCommandService,
+    private val postQueryService: PostQueryService
 ) {
     @Operation(summary = "게시글 등록")
     @PostMapping
@@ -30,18 +32,18 @@ class PostController(
         @RequestBody dto: CreatePostRequest,
     ) {
         val socialId = getSocialId(bearerToken)
-        postService.create(socialId, dto)
+        postCommandService.create(socialId, dto)
     }
 
     @Operation(summary = "게시글 목록 조회")
     @GetMapping
     fun getPosts(@RequestParam lastPostId: Long): SuccessResponse<PostPollResponses> {
-        return SuccessResponse(postService.getShowMoreList(lastPostId))
+        return SuccessResponse(postQueryService.getShowMorePosts(lastPostId))
     }
 
     @Operation(summary = "게시글 단건 조회")
     @GetMapping("/{postId}")
     fun getPost(@PathVariable postId: Long): SuccessResponse<PostPollResponse> {
-        return SuccessResponse(postService.getPost(postId))
+        return SuccessResponse(postQueryService.getPost(postId))
     }
 }

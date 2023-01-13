@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Transactional(readOnly = true)
 @Service
-class PollService(
+class PollQueryService(
     private val pollParticipantRepository: PollParticipantRepository,
     private val pollWatcherRepository: PollWatcherRepository,
 ) {

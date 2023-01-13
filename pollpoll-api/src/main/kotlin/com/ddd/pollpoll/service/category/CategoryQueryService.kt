@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Transactional(readOnly = true)
 @Service
-class CategoryService(
+class CategoryQueryService(
     private val categoryRepository: CategoryRepository
 ) {
     fun getCategory(categoryId: Long): Category {

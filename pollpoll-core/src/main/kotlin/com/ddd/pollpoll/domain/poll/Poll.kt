@@ -2,16 +2,16 @@ package com.ddd.pollpoll.domain.poll
 
 import com.ddd.pollpoll.domain.common.BaseEntity
 import com.ddd.pollpoll.domain.post.Post
+import org.hibernate.annotations.Where
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
 import javax.persistence.FetchType
 import javax.persistence.JoinColumn
 import javax.persistence.OneToOne
 import javax.persistence.Table
 
+@Where(clause = "is_deleted = 0")
 @Table(name = "poll")
 @Entity
 class Poll(

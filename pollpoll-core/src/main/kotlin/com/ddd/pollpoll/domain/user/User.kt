@@ -1,11 +1,13 @@
 package com.ddd.pollpoll.domain.user
 
 import com.ddd.pollpoll.domain.common.BaseEntity
+import org.hibernate.annotations.Where
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.Table
 
+@Where(clause = "is_deleted = 0")
 @Table(name = "users")
 @Entity
 class User(

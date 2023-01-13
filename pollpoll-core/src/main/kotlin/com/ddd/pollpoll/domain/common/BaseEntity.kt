@@ -14,6 +14,8 @@ abstract class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0
 
+    val isDeleted = false
+
     @CreationTimestamp
     val createdAt: LocalDateTime? = null
 

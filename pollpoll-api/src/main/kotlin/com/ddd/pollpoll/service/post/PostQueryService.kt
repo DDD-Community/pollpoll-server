@@ -5,6 +5,7 @@ import com.ddd.pollpoll.controller.post.dto.PostPollResponses
 import com.ddd.pollpoll.repository.poll.PollParticipantRepository
 import com.ddd.pollpoll.repository.poll.PollRepository
 import com.ddd.pollpoll.repository.poll.PollWatcherRepository
+import com.ddd.pollpoll.repository.post.PostDto
 import com.ddd.pollpoll.repository.post.PostRepository
 import com.ddd.pollpoll.service.poll.PollQueryService
 import org.springframework.stereotype.Service
@@ -14,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class PostQueryService(
     private val pollQueryService: PollQueryService,
-
     private val postRepository: PostRepository,
     private val pollRepository: PollRepository,
     private val pollParticipantRepository: PollParticipantRepository,
@@ -22,6 +22,18 @@ class PostQueryService(
 ) {
     fun getShowMorePosts(lastPostId: Long): PostPollResponses {
         val postDtos = postRepository.getListByLastPostId(lastPostId)
+        return getPostPollResponses(postDtos)
+    }
+
+    fun searchPosts(keyword: String): PostPollResponses {
+        val postDtos = postRepository.getListByKeyword(keyword)
+        if (postDtos.isEmpty()) {
+            return PostPollResponses.empty()
+        }
+        return getPostPollResponses(postDtos)
+    }
+
+    private fun getPostPollResponses(postDtos: List<PostDto>): PostPollResponses {
         val postIds = postDtos.map { it.postId }
         val pollDtos = pollRepository.getListByPostIds(postIds)
         val pollIds = pollDtos.map { it.pollId }

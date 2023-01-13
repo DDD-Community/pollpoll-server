@@ -41,6 +41,12 @@ class PostController(
         return SuccessResponse(postQueryService.getShowMorePosts(lastPostId))
     }
 
+    @Operation(summary = "게시글 검색")
+    @GetMapping("/search")
+    fun searchPosts(@RequestParam keyword: String): SuccessResponse<PostPollResponses> {
+        return SuccessResponse(postQueryService.searchPosts(keyword))
+    }
+
     @Operation(summary = "게시글 단건 조회")
     @GetMapping("/{postId}")
     fun getPost(@PathVariable postId: Long): SuccessResponse<PostPollResponse> {

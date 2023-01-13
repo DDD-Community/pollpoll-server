@@ -25,11 +25,17 @@ data class PollItemDto(
 
 data class PostPollResponses(
     val posts: List<PostPollResponse>
-)
+) {
+    companion object {
+        fun empty(): PostPollResponses {
+            return PostPollResponses(emptyList())
+        }
+    }
+}
 
 data class PostPollResponse(
     val postId: Long,
-    val title: String,
+    val title: String?,
     val contents: String,
     val postCreatedAt: Long,
     val postHits: Int,

@@ -10,8 +10,7 @@ import java.time.LocalDateTime
 
 interface PostQueryDslRepository {
     fun getOneById(postId: Long): PostDto?
-    fun getListByLastPostId(postId: Long): List<PostDto>
-    fun getListByKeyword(keyword: String): List<PostDto>
+    fun getListByLastPostIdAndKeyword(postId: Long, keyword: String?): List<PostDto>
 }
 
 class PostQueryDslRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) : PostQueryDslRepository {
@@ -24,24 +23,17 @@ class PostQueryDslRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) :
             .fetchOne()
     }
 
-    override fun getListByLastPostId(postId: Long): List<PostDto> {
+    override fun getListByLastPostIdAndKeyword(postId: Long, keyword: String?): List<PostDto> {
         return commonQuery()
             .leftJoin(postHits).on(postHits.post.id.eq(post.id))
-            .where(post.id.lt(postId))
+            .where(
+                post.id.lt(postId),
+                if (keyword === null) null else post.title.contains(keyword), // todo: refactoring
+            )
             .groupBy(post.id)
             .orderBy(post.id.desc())
             .limit(2)
             .fetch()
-    }
-
-    override fun getListByKeyword(keyword: String): List<PostDto> {
-        val fetch = commonQuery()
-            .leftJoin(postHits).on(postHits.post.id.eq(post.id))
-            .where(post.title.contains(keyword))
-            .groupBy(post.id)
-            .orderBy(post.id.desc())
-            .fetch()
-        return fetch
     }
 
     private fun commonQuery() = jpaQueryFactory

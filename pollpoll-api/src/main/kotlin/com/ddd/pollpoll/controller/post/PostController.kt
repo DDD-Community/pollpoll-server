@@ -36,16 +36,13 @@ class PostController(
         postCommandService.create(socialId, dto)
     }
 
-    @Operation(summary = "게시글 목록 조회")
+    @Operation(summary = "게시글 더보기 목록 조회 (+키워드 검색)")
     @GetMapping
-    fun getPosts(@RequestParam lastPostId: Long): SuccessResponse<PostPollResponses> {
-        return SuccessResponse(postQueryService.getShowMorePosts(lastPostId))
-    }
-
-    @Operation(summary = "게시글 검색")
-    @GetMapping("/search")
-    fun searchPosts(@RequestParam keyword: String): SuccessResponse<PostPollResponses> {
-        return SuccessResponse(postQueryService.searchPosts(keyword))
+    fun getPosts(
+        @RequestParam(required = true) lastPostId: Long,
+        @RequestParam(required = false) keyword: String?
+    ): SuccessResponse<PostPollResponses> {
+        return SuccessResponse(postQueryService.getShowMorePosts(lastPostId, keyword))
     }
 
     @Operation(summary = "게시글 단건 조회")

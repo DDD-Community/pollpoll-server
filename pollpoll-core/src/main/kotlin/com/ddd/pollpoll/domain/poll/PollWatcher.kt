@@ -6,6 +6,7 @@ import org.hibernate.annotations.Where
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 import javax.persistence.OneToOne
 import javax.persistence.Table
 
@@ -13,7 +14,7 @@ import javax.persistence.Table
 @Table(name = "poll_watcher")
 @Entity
 class PollWatcher(
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "poll_id")
     val poll: Poll,
     @OneToOne(fetch = FetchType.LAZY)

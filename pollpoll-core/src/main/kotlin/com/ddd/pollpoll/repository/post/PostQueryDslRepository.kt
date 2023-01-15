@@ -52,8 +52,9 @@ class PostQueryDslRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) :
                 post.contents,
                 post.createdAt,
                 postHits.count().intValue(),
+                user.id,
                 user.nickname,
-                category.name
+                category.name,
             )
         )
         .from(post)
@@ -68,6 +69,7 @@ data class PostDto @QueryProjection constructor(
     val postContents: String,
     val postCreatedAt: LocalDateTime,
     val postHits: Int,
+    val userId: Long,
     val nickname: String,
     val categoryName: String,
 )

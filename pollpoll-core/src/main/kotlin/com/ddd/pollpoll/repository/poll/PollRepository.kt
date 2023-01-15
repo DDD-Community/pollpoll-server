@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface PollRepository : JpaRepository<Poll, Long>, PollQueryDslRepository
+interface PollRepository : JpaRepository<Poll, Long>, PollQueryDslRepository {
+    fun findByPostId(postId: Long): Poll?
+}

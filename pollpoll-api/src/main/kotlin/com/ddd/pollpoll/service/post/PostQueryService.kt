@@ -53,8 +53,8 @@ class PostQueryService(
     fun getPost(postId: Long): PostPollResponse {
         val postDto = postRepository.getOneById(postId) ?: throw RuntimeException("존재하지 않는 게시글입니다.")
         val pollDto = pollRepository.getOneByPostId(postId) ?: throw RuntimeException("존재하지 않는 투표입니다.")
-        val participantCount = pollParticipantRepository.countByPoll_Id(pollDto.pollId)
-        val watcherCount = pollWatcherRepository.countByPoll_Id(pollDto.pollId)
+        val participantCount = pollParticipantRepository.countByPollId(pollDto.pollId)
+        val watcherCount = pollWatcherRepository.countByPollId(pollDto.pollId)
 
         return PostPollResponse.of(postDto, pollDto, participantCount, watcherCount)
     }

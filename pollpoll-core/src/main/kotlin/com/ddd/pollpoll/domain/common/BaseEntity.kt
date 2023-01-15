@@ -14,7 +14,7 @@ abstract class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0
 
-    val isDeleted = false
+    var isDeleted = false
 
     @CreationTimestamp
     val createdAt: LocalDateTime? = null
@@ -22,4 +22,8 @@ abstract class BaseEntity {
     @UpdateTimestamp
     var updatedAt: LocalDateTime? = null
         protected set
+
+    fun delete() {
+        isDeleted = true
+    }
 }

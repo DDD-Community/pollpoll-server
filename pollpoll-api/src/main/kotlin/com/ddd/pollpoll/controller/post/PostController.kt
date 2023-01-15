@@ -9,6 +9,7 @@ import com.ddd.pollpoll.service.post.PostQueryService
 import com.ddd.pollpoll.util.getSocialId
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -51,5 +52,15 @@ class PostController(
     @GetMapping("/{postId}")
     fun getPost(@PathVariable postId: Long): SuccessResponse<PostPollResponse> {
         return SuccessResponse(postQueryService.getPost(postId))
+    }
+
+    @Operation(summary = "게시글 삭제")
+    @DeleteMapping("/{postId}")
+    fun deletePost(
+        @RequestHeader("Authorization") bearerToken: String,
+        @PathVariable postId: Long,
+    ) {
+        val socialId = getSocialId(bearerToken)
+        postCommandService.deletePost(socialId, postId)
     }
 }

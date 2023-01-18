@@ -28,7 +28,7 @@ data class TokenInfoDto(
     private val exp: String,
     private val alg: String?,
     private val kid: String?,
-    private val typ: String,
+    private val typ: String?,
 ) {
     val socialId: String
         get() = sub

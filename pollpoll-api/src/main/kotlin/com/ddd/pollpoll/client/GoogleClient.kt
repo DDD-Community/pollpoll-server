@@ -23,11 +23,11 @@ data class TokenInfoDto(
     private val sub: String,
     private val email: String,
     private val emailVerified: String,
-    private val atHash: String,
+    private val atHash: String?,
     private val iat: String,
     private val exp: String,
-    private val alg: String,
-    private val kid: String,
+    private val alg: String?,
+    private val kid: String?,
     private val typ: String,
 ) {
     val socialId: String

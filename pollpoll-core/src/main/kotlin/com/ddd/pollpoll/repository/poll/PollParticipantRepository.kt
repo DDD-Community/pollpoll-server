@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface PollParticipantRepository : JpaRepository<PollParticipant, Long>, PollParticipantQueryDslRepository {
+    fun findByUserIdAndPollId(userId: Long, pollId: Long): List<PollParticipant>
+
     fun countByPollId(pollId: Long): Int
 
     @Modifying

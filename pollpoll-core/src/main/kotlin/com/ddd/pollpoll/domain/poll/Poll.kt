@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.JoinColumn
+import javax.persistence.OneToMany
 import javax.persistence.OneToOne
 import javax.persistence.Table
 
@@ -18,6 +19,8 @@ class Poll(
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     val post: Post,
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "poll")
+    val pollItems: List<PollItem> = emptyList(),
     val isMultipleChoice: Boolean,
     val startAt: LocalDateTime,
     val endAt: LocalDateTime,

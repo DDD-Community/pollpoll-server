@@ -6,6 +6,7 @@ import com.ddd.pollpoll.util.getSocialId
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 class PollController(
     private val pollCommandService: PollCommandService,
 ) {
-    @Operation(summary = "투표/재투표")
+    @Operation(summary = "투표하기, 다시 투표하기")
     @PutMapping("/{pollId}")
     fun participant(
         @RequestHeader("Authorization") bearerToken: String,
@@ -27,5 +28,15 @@ class PollController(
     ) {
         val socialId = getSocialId(bearerToken)
         pollCommandService.participant(socialId, pollId, dto)
+    }
+
+    @Operation(summary = "구경하기")
+    @PostMapping("/{pollId}/watch")
+    fun watch(
+        @RequestHeader("Authorization") bearerToken: String,
+        @PathVariable pollId: Long,
+    ) {
+        val socialId = getSocialId(bearerToken)
+        pollCommandService.watch(socialId, pollId)
     }
 }

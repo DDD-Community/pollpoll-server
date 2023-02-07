@@ -20,7 +20,7 @@ class PollController(
     private val pollCommandService: PollCommandService,
 ) {
     @Operation(summary = "투표하기, 다시 투표하기")
-    @PutMapping("/{pollId}")
+    @PutMapping("/{pollId}/participate")
     fun participant(
         @RequestHeader("Authorization") bearerToken: String,
         @PathVariable pollId: Long,

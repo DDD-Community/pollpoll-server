@@ -25,24 +25,49 @@ class PostQueryService(
         if (postDtos.isEmpty()) {
             return PostPollResponses.empty()
         }
-        return getPostPollResponses(postDtos)
+        val responses = toResponses(postDtos)
+        return PostPollResponses(responses)
     }
 
-    private fun getPostPollResponses(postDtos: List<PostDto>): PostPollResponses {
+    fun getShowMoreMyPostsByUserId(lastPostId: Long, userId: Long): List<PostPollResponse> {
+        val postDtos = postRepository.getMyPostsByLastPostIdAndUserId(lastPostId, userId)
+        if (postDtos.isEmpty()) {
+            return emptyList()
+        }
+        return toResponses(postDtos)
+    }
+
+
+    fun getShowMoreParticipatePostsByUserId(lastPostId: Long, userId: Long): List<PostPollResponse> {
+        val postDtos = postRepository.getParticipatePostsByLastPostIdAndUserId(lastPostId, userId)
+        if (postDtos.isEmpty()) {
+            return emptyList()
+        }
+        return toResponses(postDtos)
+    }
+
+    fun getShowMoreWatchPostsByUserId(lastPostId: Long, userId: Long): List<PostPollResponse> {
+        val postDtos = postRepository.getWatchPostsByLastPostIdAndUser(lastPostId, userId)
+        if (postDtos.isEmpty()) {
+            return emptyList()
+        }
+        return toResponses(postDtos)
+    }
+
+    fun toResponses(postDtos: List<PostDto>): List<PostPollResponse> {
         val postIds = postDtos.map { it.postId }
         val pollDtos = pollRepository.getListByPostIds(postIds)
         val pollIds = pollDtos.map { it.pollId }
         val pollParticipants = pollQueryService.getPollParticipantsByPollIds(pollIds)
         val pollWatchers = pollQueryService.getPollWatchersByPollIds(pollIds)
 
-        val responses = postDtos.map {
+        return postDtos.map {
             val pollDto = pollDtos.first { pollDto -> pollDto.postId == it.postId }
             val participantCount = pollParticipants[pollDto.pollId]?.size ?: 0
             val watcherCount = pollWatchers[pollDto.pollId]?.size ?: 0
 
             PostPollResponse.of(it, pollDto, participantCount, watcherCount)
         }
-        return PostPollResponses(responses)
     }
 
     fun getPost(postId: Long): PostPollResponse {

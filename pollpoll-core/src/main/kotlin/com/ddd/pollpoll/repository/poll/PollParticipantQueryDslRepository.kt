@@ -6,6 +6,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 
 interface PollParticipantQueryDslRepository {
     fun getListByPollIds(pollIds: List<Long>): List<PollParticipant>
+
+    fun countParticipatePollByUserId(userId: Long): Int
 }
 
 class PollParticipantQueryDslRepositoryImpl(
@@ -16,5 +18,12 @@ class PollParticipantQueryDslRepositoryImpl(
             .selectFrom(pollParticipant)
             .where(pollParticipant.poll.id.`in`(pollIds))
             .fetch()
+    }
+
+    override fun countParticipatePollByUserId(userId: Long): Int {
+        return jpaQueryFactory
+            .selectFrom(pollParticipant)
+            .where(pollParticipant.user.id.eq(userId))
+            .fetch().size
     }
 }

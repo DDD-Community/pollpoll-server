@@ -2,6 +2,8 @@ package com.ddd.pollpoll.controller.user
 
 import com.ddd.pollpoll.controller.SuccessResponse
 import com.ddd.pollpoll.controller.user.dto.HasNicknameResponse
+import com.ddd.pollpoll.controller.user.dto.MyPageResponse
+import com.ddd.pollpoll.controller.user.dto.MyPageType
 import com.ddd.pollpoll.controller.user.dto.UpdateNicknameRequest
 import com.ddd.pollpoll.service.user.UserCommandService
 import com.ddd.pollpoll.service.user.UserQueryService
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @Tag(name = "사용자")
@@ -34,5 +37,16 @@ class UserController(
     fun update(@RequestHeader("Authorization") bearerToken: String, @RequestBody dto: UpdateNicknameRequest) {
         val socialId = getSocialId(bearerToken)
         userCommandService.updateNickname(socialId, dto)
+    }
+
+    @Operation(summary = "마이페이지")
+    @GetMapping("/my-page")
+    fun myPage(
+        @RequestHeader("Authorization") bearerToken: String,
+        @RequestParam type: MyPageType,
+        @RequestParam lastPostId: Long,
+    ): SuccessResponse<MyPageResponse> {
+        val socialId = getSocialId(bearerToken)
+        return SuccessResponse(userQueryService.getMyPageWithShowMorePosts(socialId, type, lastPostId))
     }
 }

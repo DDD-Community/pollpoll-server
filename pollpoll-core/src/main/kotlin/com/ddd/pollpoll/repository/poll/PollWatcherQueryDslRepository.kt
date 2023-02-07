@@ -6,6 +6,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 
 interface PollWatcherQueryDslRepository {
     fun getListByPollIds(pollIds: List<Long>): List<PollWatcher>
+
+    fun countWatchPollByUserId(userId: Long): Int
 }
 
 class PollWatcherQueryDslRepositoryImpl(
@@ -16,5 +18,12 @@ class PollWatcherQueryDslRepositoryImpl(
             .selectFrom(pollWatcher)
             .where(pollWatcher.poll.id.`in`(pollIds))
             .fetch()
+    }
+
+    override fun countWatchPollByUserId(userId: Long): Int {
+        return jpaQueryFactory
+            .selectFrom(pollWatcher)
+            .where(pollWatcher.user.id.eq(userId))
+            .fetch().size
     }
 }

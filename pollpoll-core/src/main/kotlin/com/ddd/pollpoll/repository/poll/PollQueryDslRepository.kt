@@ -2,6 +2,7 @@ package com.ddd.pollpoll.repository.poll
 
 import com.ddd.pollpoll.domain.poll.QPoll.poll
 import com.ddd.pollpoll.domain.poll.QPollItem.pollItem
+import com.ddd.pollpoll.domain.post.QPost.post
 import com.querydsl.core.annotations.QueryProjection
 import com.querydsl.jpa.impl.JPAQueryFactory
 import java.time.LocalDateTime
@@ -9,6 +10,7 @@ import java.time.LocalDateTime
 interface PollQueryDslRepository {
     fun getOneByPostId(postId: Long): PollDto?
     fun getListByPostIds(postIds: List<Long>): List<PollDto>
+    fun countPollByUserId(userId: Long): Int
 }
 
 class PollQueryDslRepositoryImpl(
@@ -46,6 +48,14 @@ class PollQueryDslRepositoryImpl(
             .where(poll.post.id.`in`(postIds))
             .groupBy(poll.id)
             .fetch()
+    }
+
+    override fun countPollByUserId(userId: Long): Int {
+        return jpaQueryFactory
+            .selectFrom(poll)
+            .innerJoin(poll.post, post)
+            .where(post.user.id.eq(userId))
+            .fetch().size
     }
 }
 

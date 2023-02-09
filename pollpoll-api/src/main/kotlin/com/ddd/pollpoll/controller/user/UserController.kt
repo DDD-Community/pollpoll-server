@@ -45,8 +45,16 @@ class UserController(
         @RequestHeader("Authorization") bearerToken: String,
         @RequestParam type: MyPageType,
         @RequestParam lastPostId: Long?,
+        @RequestParam showOnlyInProgress: Boolean = false,
     ): SuccessResponse<MyPageResponse> {
         val socialId = getSocialId(bearerToken)
-        return SuccessResponse(userQueryService.getMyPageWithShowMorePosts(socialId, type, lastPostId))
+        return SuccessResponse(
+            userQueryService.getMyPageWithShowMorePosts(
+                socialId,
+                type,
+                lastPostId,
+                showOnlyInProgress
+            )
+        )
     }
 }

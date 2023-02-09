@@ -24,7 +24,7 @@ class PostQueryService(
     private val pollParticipantRepository: PollParticipantRepository,
     private val pollWatcherRepository: PollWatcherRepository,
 ) {
-    fun getShowMorePosts(lastPostId: Long, keyword: String?): PostPollResponses {
+    fun getShowMorePosts(lastPostId: Long?, keyword: String?): PostPollResponses {
         val postDtos = postRepository.getListByLastPostIdAndKeyword(lastPostId, keyword)
         if (postDtos.isEmpty()) {
             return PostPollResponses.empty()
@@ -33,7 +33,7 @@ class PostQueryService(
         return PostPollResponses(responses)
     }
 
-    fun getShowMoreMyPostsByUserId(lastPostId: Long, userId: Long): List<PostPollResponse> {
+    fun getShowMoreMyPostsByUserId(lastPostId: Long?, userId: Long): List<PostPollResponse> {
         val postDtos = postRepository.getMyPostsByLastPostIdAndUserId(lastPostId, userId)
         if (postDtos.isEmpty()) {
             return emptyList()
@@ -42,7 +42,7 @@ class PostQueryService(
     }
 
 
-    fun getShowMoreParticipatePostsByUserId(lastPostId: Long, userId: Long): List<PostPollResponse> {
+    fun getShowMoreParticipatePostsByUserId(lastPostId: Long?, userId: Long): List<PostPollResponse> {
         val postDtos = postRepository.getParticipatePostsByLastPostIdAndUserId(lastPostId, userId)
         if (postDtos.isEmpty()) {
             return emptyList()
@@ -50,7 +50,7 @@ class PostQueryService(
         return toResponses(postDtos)
     }
 
-    fun getShowMoreWatchPostsByUserId(lastPostId: Long, userId: Long): List<PostPollResponse> {
+    fun getShowMoreWatchPostsByUserId(lastPostId: Long?, userId: Long): List<PostPollResponse> {
         val postDtos = postRepository.getWatchPostsByLastPostIdAndUser(lastPostId, userId)
         if (postDtos.isEmpty()) {
             return emptyList()

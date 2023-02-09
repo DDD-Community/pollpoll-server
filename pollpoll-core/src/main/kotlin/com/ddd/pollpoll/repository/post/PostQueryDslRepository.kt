@@ -14,10 +14,10 @@ import java.time.LocalDateTime
 
 interface PostQueryDslRepository {
     fun getOneById(postId: Long): PostDto?
-    fun getListByLastPostIdAndKeyword(lastPostId: Long, keyword: String?): List<PostDto>
-    fun getMyPostsByLastPostIdAndUserId(lastPostId: Long, userId: Long): List<PostDto>
-    fun getParticipatePostsByLastPostIdAndUserId(lastPostId: Long, userId: Long): List<PostDto>
-    fun getWatchPostsByLastPostIdAndUser(lastPostId: Long, userId: Long): List<PostDto>
+    fun getListByLastPostIdAndKeyword(lastPostId: Long?, keyword: String?): List<PostDto>
+    fun getMyPostsByLastPostIdAndUserId(lastPostId: Long?, userId: Long): List<PostDto>
+    fun getParticipatePostsByLastPostIdAndUserId(lastPostId: Long?, userId: Long): List<PostDto>
+    fun getWatchPostsByLastPostIdAndUser(lastPostId: Long?, userId: Long): List<PostDto>
     fun getMostParticipatePost(): PopularPost?
     fun getMostWatchPost(): PopularPost?
     fun getEndingSoonPostId(): Long?
@@ -36,12 +36,12 @@ class PostQueryDslRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) :
             .fetchOne()
     }
 
-    override fun getListByLastPostIdAndKeyword(lastPostId: Long, keyword: String?): List<PostDto> {
+    override fun getListByLastPostIdAndKeyword(lastPostId: Long?, keyword: String?): List<PostDto> {
         return commonQuery()
             .leftJoin(postHits).on(postHits.post.id.eq(post.id))
             .where(
-                post.id.lt(lastPostId),
-                if (keyword === null) null else post.title.contains(keyword), // todo: refactoring
+                if (lastPostId === null) null else post.id.lt(lastPostId),
+                if (keyword === null) null else post.title.contains(keyword),
             )
             .groupBy(post.id)
             .orderBy(post.id.desc())
@@ -49,10 +49,10 @@ class PostQueryDslRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) :
             .fetch()
     }
 
-    override fun getMyPostsByLastPostIdAndUserId(lastPostId: Long, userId: Long): List<PostDto> {
+    override fun getMyPostsByLastPostIdAndUserId(lastPostId: Long?, userId: Long): List<PostDto> {
         return commonQuery()
             .where(
-                post.id.lt(lastPostId),
+                if (lastPostId === null) null else post.id.lt(lastPostId),
                 post.user.id.eq(userId),
             )
             .groupBy(post.id)
@@ -61,12 +61,12 @@ class PostQueryDslRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) :
             .fetch()
     }
 
-    override fun getParticipatePostsByLastPostIdAndUserId(lastPostId: Long, userId: Long): List<PostDto> {
+    override fun getParticipatePostsByLastPostIdAndUserId(lastPostId: Long?, userId: Long): List<PostDto> {
         return commonQuery()
             .innerJoin(poll).on(poll.post.id.eq(post.id))
             .innerJoin(pollParticipant).on(pollParticipant.poll.id.eq(poll.id))
             .where(
-                post.id.lt(lastPostId),
+                if (lastPostId === null) null else post.id.lt(lastPostId),
                 pollParticipant.user.id.eq(userId),
                 pollParticipant.isDeleted.isFalse
             )
@@ -76,12 +76,12 @@ class PostQueryDslRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) :
             .fetch()
     }
 
-    override fun getWatchPostsByLastPostIdAndUser(lastPostId: Long, userId: Long): List<PostDto> {
+    override fun getWatchPostsByLastPostIdAndUser(lastPostId: Long?, userId: Long): List<PostDto> {
         return commonQuery()
             .innerJoin(poll).on(poll.post.id.eq(post.id))
             .innerJoin(pollWatcher).on(pollWatcher.poll.id.eq(poll.id))
             .where(
-                post.id.lt(lastPostId),
+                if (lastPostId === null) null else post.id.lt(lastPostId),
                 pollWatcher.user.id.eq(userId),
                 pollWatcher.isDeleted.isFalse
             )

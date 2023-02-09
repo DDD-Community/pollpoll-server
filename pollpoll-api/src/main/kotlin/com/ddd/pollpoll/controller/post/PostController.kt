@@ -40,8 +40,8 @@ class PostController(
     @Operation(summary = "게시글 더보기 목록 조회 (+키워드 검색)")
     @GetMapping
     fun getPosts(
-        @RequestParam(required = true) lastPostId: Long,
-        @RequestParam(required = false) keyword: String?
+        @RequestParam lastPostId: Long?,
+        @RequestParam keyword: String?
     ): SuccessResponse<PostPollResponses> {
         return SuccessResponse(postQueryService.getShowMorePosts(lastPostId, keyword))
     }

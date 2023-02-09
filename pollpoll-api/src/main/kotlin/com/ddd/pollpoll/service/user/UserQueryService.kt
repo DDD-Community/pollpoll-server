@@ -32,7 +32,7 @@ class UserQueryService(
     fun getUserBySocialId(socialId: String) =
         userRepository.findBySocialId(socialId) ?: throw RuntimeException("존재하지 않는 사용자입니다. (socialId: $socialId)")
 
-    fun getMyPageWithShowMorePosts(socialId: String, type: MyPageType, lastPostId: Long): MyPageResponse {
+    fun getMyPageWithShowMorePosts(socialId: String, type: MyPageType, lastPostId: Long?): MyPageResponse {
         val user = getUserBySocialId(socialId)
         val userId = user.id
 

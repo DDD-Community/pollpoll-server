@@ -8,6 +8,7 @@ import com.ddd.pollpoll.domain.post.QPost.post
 import com.ddd.pollpoll.domain.post.QPostHits.postHits
 import com.ddd.pollpoll.domain.user.QUser.user
 import com.querydsl.core.annotations.QueryProjection
+import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.impl.JPAQueryFactory
 import java.time.LocalDateTime
 
@@ -17,9 +18,13 @@ interface PostQueryDslRepository {
     fun getMyPostsByLastPostIdAndUserId(lastPostId: Long, userId: Long): List<PostDto>
     fun getParticipatePostsByLastPostIdAndUserId(lastPostId: Long, userId: Long): List<PostDto>
     fun getWatchPostsByLastPostIdAndUser(lastPostId: Long, userId: Long): List<PostDto>
+    fun getMostParticipatePost(): PopularPost?
+    fun getMostWatchPost(): PopularPost?
+    fun getEndingSoonPostId(): Long?
 }
 
 const val PAGE_LIMIT = 2L
+const val POPULAR_CRITERIA_DATE = 3L
 
 class PostQueryDslRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) : PostQueryDslRepository {
 
@@ -86,6 +91,60 @@ class PostQueryDslRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) :
             .fetch()
     }
 
+    override fun getMostParticipatePost(): PopularPost? {
+        val cnt = Expressions.numberPath(Long::class.java, "cnt")
+
+        return jpaQueryFactory
+            .select(
+                QPopularPost(
+                    post.id,
+                    pollParticipant.id.count().`as`(cnt)
+                )
+            )
+            .from(post)
+            .innerJoin(poll).on(poll.post.id.eq(post.id))
+            .innerJoin(pollParticipant).on(pollParticipant.poll.id.eq(poll.id))
+            .where(
+                post.createdAt.goe(LocalDateTime.now().minusDays(POPULAR_CRITERIA_DATE)),
+                pollParticipant.isDeleted.isFalse,
+            )
+            .groupBy(post.id)
+            .orderBy(cnt.desc())
+            .fetchOne()
+    }
+
+    override fun getMostWatchPost(): PopularPost? {
+        val cnt = Expressions.numberPath(Long::class.java, "cnt")
+
+        return jpaQueryFactory
+            .select(
+                QPopularPost(
+                    post.id,
+                    pollWatcher.id.count().`as`(cnt)
+                )
+            )
+            .from(post)
+            .innerJoin(poll).on(poll.post.id.eq(post.id))
+            .innerJoin(pollWatcher).on(pollWatcher.poll.id.eq(poll.id))
+            .where(
+                post.createdAt.goe(LocalDateTime.now().minusDays(POPULAR_CRITERIA_DATE)),
+                pollWatcher.isDeleted.isFalse,
+            )
+            .groupBy(post.id)
+            .orderBy(cnt.desc())
+            .fetchOne()
+    }
+
+    override fun getEndingSoonPostId(): Long? {
+        return jpaQueryFactory
+            .select(post.id)
+            .from(post)
+            .innerJoin(poll).on(poll.post.id.eq(post.id))
+            .where(poll.endAt.goe(LocalDateTime.now()))
+            .orderBy(poll.endAt.desc())
+            .fetchOne()
+    }
+
     private fun commonQuery() = jpaQueryFactory
         .select(
             QPostDto(
@@ -114,4 +173,9 @@ data class PostDto @QueryProjection constructor(
     val userId: Long,
     val nickname: String,
     val categoryName: String,
+)
+
+data class PopularPost @QueryProjection constructor(
+    val postId: Long,
+    val count: Long,
 )

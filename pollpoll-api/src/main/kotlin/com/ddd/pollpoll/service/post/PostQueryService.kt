@@ -1,6 +1,7 @@
 package com.ddd.pollpoll.service.post
 
 import com.ddd.pollpoll.controller.post.dto.PollItemResponseDto
+import com.ddd.pollpoll.controller.post.dto.PopularPostsResponse
 import com.ddd.pollpoll.controller.post.dto.PostPollResponse
 import com.ddd.pollpoll.controller.post.dto.PostPollResponses
 import com.ddd.pollpoll.repository.poll.PollItemRepository
@@ -93,6 +94,18 @@ class PostQueryService(
             },
             participantCount,
             watcherCount
+        )
+    }
+
+    fun getPopularPosts(): PopularPostsResponse {
+        val mostParticipatePostId = postRepository.getMostParticipatePost()?.postId
+        val mostWatchPostId = postRepository.getMostWatchPost()?.postId
+        val endingSoonPostId = postRepository.getEndingSoonPostId()
+
+        return PopularPostsResponse(
+            mostParticipatePost = if (mostParticipatePostId == null) null else getPost(mostParticipatePostId),
+            mostWatchPost = if (mostWatchPostId == null) null else getPost(mostWatchPostId),
+            endingSoonPost = if (endingSoonPostId == null) null else getPost(endingSoonPostId),
         )
     }
 }

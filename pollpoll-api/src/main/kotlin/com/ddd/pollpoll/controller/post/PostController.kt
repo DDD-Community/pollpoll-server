@@ -2,6 +2,7 @@ package com.ddd.pollpoll.controller.post
 
 import com.ddd.pollpoll.controller.SuccessResponse
 import com.ddd.pollpoll.controller.post.dto.CreatePostRequest
+import com.ddd.pollpoll.controller.post.dto.PopularPostsResponse
 import com.ddd.pollpoll.controller.post.dto.PostPollResponse
 import com.ddd.pollpoll.controller.post.dto.PostPollResponses
 import com.ddd.pollpoll.service.post.PostCommandService
@@ -59,5 +60,11 @@ class PostController(
     ) {
         val socialId = getSocialId(bearerToken)
         postCommandService.deletePost(socialId, postId)
+    }
+
+    @Operation(summary = "인기 게시글")
+    @GetMapping("/popular")
+    fun popularPosts(): SuccessResponse<PopularPostsResponse> {
+        return SuccessResponse(postQueryService.getPopularPosts())
     }
 }

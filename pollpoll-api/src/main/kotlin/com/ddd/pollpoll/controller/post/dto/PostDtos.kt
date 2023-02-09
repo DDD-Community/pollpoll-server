@@ -80,3 +80,9 @@ data class PostPollResponse(
         }
     }
 }
+
+data class PopularPostsResponse(
+    val mostParticipatePost: PostPollResponse?,
+    val mostWatchPost: PostPollResponse?,
+    val endingSoonPost: PostPollResponse?,
+)

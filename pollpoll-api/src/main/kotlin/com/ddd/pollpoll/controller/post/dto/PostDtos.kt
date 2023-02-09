@@ -26,6 +26,7 @@ data class PollItemDto(
 data class PollItemResponseDto(
     val postItemId: Long,
     val name: String,
+    val count: Long,
 )
 
 data class PostPollResponses(

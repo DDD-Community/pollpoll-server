@@ -78,12 +78,19 @@ class PostQueryService(
         val pollDto = pollRepository.getOneByPostId(postId) ?: throw RuntimeException("존재하지 않는 투표입니다.")
         val pollItems = pollItemRepository.findByPollId(pollDto.pollId)
         val participantCount = pollParticipantRepository.countByPollId(pollDto.pollId)
+        val pollItemParticipateCounts = pollParticipantRepository.getParticipateCountByPollId(pollDto.pollId)
         val watcherCount = pollWatcherRepository.countByPollId(pollDto.pollId)
 
         return PostPollResponse.of(
             postDto,
             pollDto,
-            pollItems.map { PollItemResponseDto(it.id, it.name) },
+            pollItems.map {
+                PollItemResponseDto(
+                    it.id,
+                    it.name,
+                    pollItemParticipateCounts.first { el -> el.pollItemId == it.id }.count
+                )
+            },
             participantCount,
             watcherCount
         )

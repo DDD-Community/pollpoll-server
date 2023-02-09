@@ -11,4 +11,6 @@ interface PollItemRepository : JpaRepository<PollItem, Long> {
     @Modifying
     @Query("update PollItem pi set pi.isDeleted = true where pi.poll.id = :pollId")
     fun softDeleteByPollId(pollId: Long): Int
+
+    fun findByPollId(pollId: Long): List<PollItem>
 }

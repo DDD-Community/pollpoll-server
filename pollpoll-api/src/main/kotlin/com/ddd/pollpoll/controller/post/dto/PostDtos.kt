@@ -23,6 +23,11 @@ data class PollItemDto(
     }
 }
 
+data class PollItemResponseDto(
+    val postItemId: Long,
+    val name: String,
+)
+
 data class PostPollResponses(
     val posts: List<PostPollResponse>
 ) {
@@ -44,6 +49,7 @@ data class PostPollResponse(
     val pollId: Long,
     val pollEndAt: Long,
     val pollItemCount: Int,
+    val pollItems: List<PollItemResponseDto>?,
     val participantCount: Int,
     val watcherCount: Int,
 ) {
@@ -51,6 +57,7 @@ data class PostPollResponse(
         fun of(
             postDto: PostDto,
             pollDto: PollDto,
+            pollItemDtos: List<PollItemResponseDto>?,
             participantCount: Int,
             watcherCount: Int,
         ): PostPollResponse {
@@ -65,6 +72,7 @@ data class PostPollResponse(
                 pollId = pollDto.pollId,
                 pollEndAt = pollDto.pollEndAt.atZone(ZoneId.of("Asia/Seoul")).toInstant()?.toEpochMilli() ?: 0,
                 pollItemCount = pollDto.pollItemCount,
+                pollItems = pollItemDtos,
                 participantCount = participantCount,
                 watcherCount = watcherCount
             )

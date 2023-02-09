@@ -11,6 +11,7 @@ import com.ddd.pollpoll.repository.poll.PollRepository
 import com.ddd.pollpoll.repository.poll.PollWatcherRepository
 import com.ddd.pollpoll.repository.user.UserRepository
 import com.ddd.pollpoll.service.post.PostQueryService
+import com.ddd.pollpoll.util.getNickname
 import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -46,7 +47,11 @@ class UserQueryService(
         val watchPollCount = pollWatcherRepository.countWatchPollByUserId(userId = userId)
         val posts = when (type) {
             MY_POLL -> postQueryService.getShowMoreMyPostsByUserId(lastPostId, userId, showOnlyInProgress)
-            PARTICIPATE_POLL -> postQueryService.getShowMoreParticipatePostsByUserId(lastPostId, userId, showOnlyInProgress)
+            PARTICIPATE_POLL -> postQueryService.getShowMoreParticipatePostsByUserId(
+                lastPostId,
+                userId,
+                showOnlyInProgress
+            )
             WATCH_POLL -> postQueryService.getShowMoreWatchPostsByUserId(lastPostId, userId, showOnlyInProgress)
         }
 
@@ -57,5 +62,14 @@ class UserQueryService(
             watchPollCount = watchPollCount,
             posts = posts
         )
+    }
+
+    fun recommendNickname(): String {
+        val nickname = getNickname()
+        return if (userRepository.findByNickname(nickname)?.nickname != null) {
+            StringUtils.EMPTY
+        } else {
+            nickname
+        }
     }
 }

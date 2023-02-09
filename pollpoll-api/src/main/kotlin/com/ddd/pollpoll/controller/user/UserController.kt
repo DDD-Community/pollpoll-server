@@ -4,6 +4,7 @@ import com.ddd.pollpoll.controller.SuccessResponse
 import com.ddd.pollpoll.controller.user.dto.HasNicknameResponse
 import com.ddd.pollpoll.controller.user.dto.MyPageResponse
 import com.ddd.pollpoll.controller.user.dto.MyPageType
+import com.ddd.pollpoll.controller.user.dto.RecommendNicknameResponse
 import com.ddd.pollpoll.controller.user.dto.UpdateNicknameRequest
 import com.ddd.pollpoll.service.user.UserCommandService
 import com.ddd.pollpoll.service.user.UserQueryService
@@ -37,6 +38,13 @@ class UserController(
     fun update(@RequestHeader("Authorization") bearerToken: String, @RequestBody dto: UpdateNicknameRequest) {
         val socialId = getSocialId(bearerToken)
         userCommandService.updateNickname(socialId, dto)
+    }
+
+    @Operation(summary = "닉네임 추천")
+    @GetMapping("/nickname-recommend")
+    fun nicknameRecommend(): SuccessResponse<RecommendNicknameResponse> {
+        val nickname = userQueryService.recommendNickname()
+        return SuccessResponse(RecommendNicknameResponse(nickname))
     }
 
     @Operation(summary = "마이페이지")

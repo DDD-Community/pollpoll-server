@@ -6,6 +6,8 @@ data class UpdateNicknameRequest(val nickname: String)
 
 data class HasNicknameResponse(val hasNickname: Boolean)
 
+data class RecommendNicknameResponse(val nickname: String)
+
 data class MyPageResponse(
     val nickname: String,
     val myPollCount: Int,

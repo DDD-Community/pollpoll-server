@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository
 interface UserRepository : JpaRepository<User, Long>, UserQueryDslRepository {
 
     fun findBySocialId(socialId: String): User?
+
+    fun findByNickname(nickname: String): User?
 }

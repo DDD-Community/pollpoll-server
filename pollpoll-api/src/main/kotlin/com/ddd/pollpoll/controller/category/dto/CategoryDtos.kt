@@ -7,6 +7,7 @@ data class CategoryResponses(
 )
 
 data class CategoryResponse(
+    val categoryId: Long,
     val name: String,
     val imageUrl: String,
 )
@@ -15,7 +16,7 @@ class Categories(
     private val categories: List<Category>
 ) {
     fun toResponse(): CategoryResponses {
-        val list = categories.map { CategoryResponse(it.name, it.imageUrl) }
+        val list = categories.map { CategoryResponse(it.id, it.name, it.imageUrl) }
         return CategoryResponses(list)
     }
 }

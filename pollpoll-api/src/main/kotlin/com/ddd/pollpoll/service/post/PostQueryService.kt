@@ -4,6 +4,9 @@ import com.ddd.pollpoll.controller.post.dto.PollItemResponseDto
 import com.ddd.pollpoll.controller.post.dto.PopularPostsResponse
 import com.ddd.pollpoll.controller.post.dto.PostPollResponse
 import com.ddd.pollpoll.controller.post.dto.PostPollResponses
+import com.ddd.pollpoll.exception.ErrorCode.NOT_FOUND_POLL
+import com.ddd.pollpoll.exception.ErrorCode.NOT_FOUND_POST
+import com.ddd.pollpoll.exception.PollpollException
 import com.ddd.pollpoll.repository.poll.PollItemRepository
 import com.ddd.pollpoll.repository.poll.PollParticipantRepository
 import com.ddd.pollpoll.repository.poll.PollRepository
@@ -75,8 +78,8 @@ class PostQueryService(
     }
 
     fun getPost(postId: Long): PostPollResponse {
-        val postDto = postRepository.getOneById(postId) ?: throw RuntimeException("존재하지 않는 게시글입니다.")
-        val pollDto = pollRepository.getOneByPostId(postId) ?: throw RuntimeException("존재하지 않는 투표입니다.")
+        val postDto = postRepository.getOneById(postId) ?: throw PollpollException(NOT_FOUND_POST)
+        val pollDto = pollRepository.getOneByPostId(postId) ?: throw PollpollException(NOT_FOUND_POLL)
         val pollItems = pollItemRepository.findByPollId(pollDto.pollId)
         val participantCount = pollParticipantRepository.countByPollId(pollDto.pollId)
         val pollItemParticipateCounts = pollParticipantRepository.getParticipateCountByPollId(pollDto.pollId)

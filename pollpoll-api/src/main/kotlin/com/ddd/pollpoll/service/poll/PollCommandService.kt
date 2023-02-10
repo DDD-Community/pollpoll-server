@@ -5,6 +5,8 @@ import com.ddd.pollpoll.domain.poll.Poll
 import com.ddd.pollpoll.domain.poll.PollParticipant
 import com.ddd.pollpoll.domain.poll.PollWatcher
 import com.ddd.pollpoll.domain.user.User
+import com.ddd.pollpoll.exception.ErrorCode.INVALID_POLL_ITEM
+import com.ddd.pollpoll.exception.PollpollException
 import com.ddd.pollpoll.repository.poll.PollParticipantRepository
 import com.ddd.pollpoll.repository.poll.PollWatcherRepository
 import com.ddd.pollpoll.service.user.UserQueryService
@@ -57,7 +59,9 @@ class PollCommandService(
         user: User,
     ) {
         val selectedPollItems = poll.pollItems.filter { selectedPollItemIds.contains(it.id) }
-        require(selectedPollItems.size == selectedPollItemIds.size) { "투표 항목이 변경되었습니다. 다시 투표해주세요." }
+        if (selectedPollItems.size != selectedPollItemIds.size) {
+            throw PollpollException(INVALID_POLL_ITEM)
+        }
 
         for (selectedPollItem in selectedPollItems) {
             pollParticipantRepository.save(PollParticipant(user, poll, selectedPollItem))

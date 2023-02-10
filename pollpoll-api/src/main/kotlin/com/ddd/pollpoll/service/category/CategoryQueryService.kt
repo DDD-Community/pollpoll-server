@@ -2,6 +2,8 @@ package com.ddd.pollpoll.service.category
 
 import com.ddd.pollpoll.controller.category.dto.Categories
 import com.ddd.pollpoll.domain.post.Category
+import com.ddd.pollpoll.exception.ErrorCode.NOT_FOUND_CATEGORY
+import com.ddd.pollpoll.exception.PollpollException
 import com.ddd.pollpoll.repository.category.CategoryRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -14,7 +16,7 @@ class CategoryQueryService(
 ) {
     fun getCategory(categoryId: Long): Category {
         return categoryRepository.findByIdOrNull(categoryId)
-            ?: throw RuntimeException("존재하지 않는 카테고리입니다. (categoryId: ${categoryId})")
+            ?: throw PollpollException(NOT_FOUND_CATEGORY)
     }
 
     fun getCategories(): Categories {

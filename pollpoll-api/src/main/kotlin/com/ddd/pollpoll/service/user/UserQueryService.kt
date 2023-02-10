@@ -6,6 +6,8 @@ import com.ddd.pollpoll.controller.user.dto.MyPageType
 import com.ddd.pollpoll.controller.user.dto.MyPageType.MY_POLL
 import com.ddd.pollpoll.controller.user.dto.MyPageType.PARTICIPATE_POLL
 import com.ddd.pollpoll.controller.user.dto.MyPageType.WATCH_POLL
+import com.ddd.pollpoll.exception.ErrorCode.NOT_FOUND_USER
+import com.ddd.pollpoll.exception.PollpollException
 import com.ddd.pollpoll.repository.poll.PollParticipantRepository
 import com.ddd.pollpoll.repository.poll.PollRepository
 import com.ddd.pollpoll.repository.poll.PollWatcherRepository
@@ -31,7 +33,7 @@ class UserQueryService(
     }
 
     fun getUserBySocialId(socialId: String) =
-        userRepository.findBySocialId(socialId) ?: throw RuntimeException("존재하지 않는 사용자입니다. (socialId: $socialId)")
+        userRepository.findBySocialId(socialId) ?: throw PollpollException(NOT_FOUND_USER)
 
     fun getMyPageWithShowMorePosts(socialId: String, type: MyPageType, lastPostId: Long?): MyPageResponse {
         val user = getUserBySocialId(socialId)

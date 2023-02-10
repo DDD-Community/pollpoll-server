@@ -5,6 +5,11 @@ import com.ddd.pollpoll.controller.post.dto.PollItemDto
 import com.ddd.pollpoll.domain.poll.Poll
 import com.ddd.pollpoll.domain.poll.PollItem
 import com.ddd.pollpoll.domain.post.Post
+import com.ddd.pollpoll.exception.ErrorCode
+import com.ddd.pollpoll.exception.ErrorCode.FORBIDDEN_TO_DELETE_POST
+import com.ddd.pollpoll.exception.ErrorCode.MINIMUM_POLL_ITEM_COUNT
+import com.ddd.pollpoll.exception.ErrorCode.NOT_FOUND_POLL
+import com.ddd.pollpoll.exception.PollpollException
 import com.ddd.pollpoll.repository.poll.PollItemRepository
 import com.ddd.pollpoll.repository.poll.PollParticipantRepository
 import com.ddd.pollpoll.repository.poll.PollRepository
@@ -43,9 +48,11 @@ class PostCommandService(
 
     fun deletePost(socialId: String, postId: Long) {
         val user = userQueryService.getUserBySocialId(socialId)
-        val post = postRepository.findByIdOrNull(postId) ?: throw RuntimeException("존재하지 않는 게시글입니다.")
-        require(user.id == post.user.id) { "본인의 게시글만 삭제할 수 있습니다. (requestUserId: ${user.id}, postUserId: ${post.user.id}" }
-        val poll = pollRepository.findByPostId(postId) ?: throw RuntimeException("존재하지 않는 투표입니다.")
+        val post = postRepository.findByIdOrNull(postId) ?: throw PollpollException(ErrorCode.NOT_FOUND_POST)
+        if (user.id != post.user.id) {
+            throw PollpollException(FORBIDDEN_TO_DELETE_POST)
+        }
+        val poll = pollRepository.findByPostId(postId) ?: throw PollpollException(NOT_FOUND_POLL)
 
         participantRepository.softDeleteByPollId(poll.id)
         watcherRepository.softDeleteByPollId(poll.id)
@@ -62,6 +69,6 @@ class PostCommandService(
         return pollItemDtos
             .map { it.toEntity(poll) }
             .takeIf { it.size >= 2 }
-            ?: throw RuntimeException("투표 항목은 2개 이상이어야 합니다.")
+            ?: throw PollpollException(MINIMUM_POLL_ITEM_COUNT)
     }
 }

@@ -3,6 +3,8 @@ package com.ddd.pollpoll.service.poll
 import com.ddd.pollpoll.domain.poll.Poll
 import com.ddd.pollpoll.domain.poll.PollParticipant
 import com.ddd.pollpoll.domain.poll.PollWatcher
+import com.ddd.pollpoll.exception.ErrorCode.NOT_FOUND_POLL
+import com.ddd.pollpoll.exception.PollpollException
 import com.ddd.pollpoll.repository.poll.PollParticipantRepository
 import com.ddd.pollpoll.repository.poll.PollRepository
 import com.ddd.pollpoll.repository.poll.PollWatcherRepository
@@ -18,7 +20,7 @@ class PollQueryService(
     private val pollWatcherRepository: PollWatcherRepository,
 ) {
     fun getPollByPollId(pollId: Long): Poll {
-        return pollRepository.findByIdOrNull(pollId) ?: throw RuntimeException("존재하지 않는 투표입니다.")
+        return pollRepository.findByIdOrNull(pollId) ?: throw PollpollException(NOT_FOUND_POLL)
     }
 
     fun getPollParticipantsByPollIds(pollIds: List<Long>): Map<Long, List<PollParticipant>> {

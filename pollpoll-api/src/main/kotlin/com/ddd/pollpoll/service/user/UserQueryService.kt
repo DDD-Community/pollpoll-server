@@ -33,12 +33,7 @@ class UserQueryService(
     fun getUserBySocialId(socialId: String) =
         userRepository.findBySocialId(socialId) ?: throw RuntimeException("존재하지 않는 사용자입니다. (socialId: $socialId)")
 
-    fun getMyPageWithShowMorePosts(
-        socialId: String,
-        type: MyPageType,
-        lastPostId: Long?,
-        showOnlyInProgress: Boolean
-    ): MyPageResponse {
+    fun getMyPageWithShowMorePosts(socialId: String, type: MyPageType, lastPostId: Long?): MyPageResponse {
         val user = getUserBySocialId(socialId)
         val userId = user.id
 
@@ -46,13 +41,9 @@ class UserQueryService(
         val participatePollCount = pollParticipantRepository.countParticipatePollByUserId(userId = userId)
         val watchPollCount = pollWatcherRepository.countWatchPollByUserId(userId = userId)
         val posts = when (type) {
-            MY_POLL -> postQueryService.getShowMoreMyPostsByUserId(lastPostId, userId, showOnlyInProgress)
-            PARTICIPATE_POLL -> postQueryService.getShowMoreParticipatePostsByUserId(
-                lastPostId,
-                userId,
-                showOnlyInProgress
-            )
-            WATCH_POLL -> postQueryService.getShowMoreWatchPostsByUserId(lastPostId, userId, showOnlyInProgress)
+            MY_POLL -> postQueryService.getShowMoreMyPostsByUserId(lastPostId, userId)
+            PARTICIPATE_POLL -> postQueryService.getShowMoreParticipatePostsByUserId(lastPostId, userId)
+            WATCH_POLL -> postQueryService.getShowMoreWatchPostsByUserId(lastPostId, userId)
         }
 
         return MyPageResponse(

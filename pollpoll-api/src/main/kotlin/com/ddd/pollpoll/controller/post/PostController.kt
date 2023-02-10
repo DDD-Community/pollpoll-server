@@ -41,10 +41,9 @@ class PostController(
     @GetMapping
     fun getPosts(
         @RequestParam lastPostId: Long?,
-        @RequestParam keyword: String?,
-        @RequestParam showOnlyInProgress: Boolean = false
+        @RequestParam keyword: String?
     ): SuccessResponse<PostPollResponses> {
-        return SuccessResponse(postQueryService.getShowMorePosts(lastPostId, keyword, showOnlyInProgress))
+        return SuccessResponse(postQueryService.getShowMorePosts(lastPostId, keyword))
     }
 
     @Operation(summary = "게시글 단건 조회")

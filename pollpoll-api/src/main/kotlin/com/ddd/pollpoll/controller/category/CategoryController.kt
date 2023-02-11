@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @Tag(name = "카테고리")
@@ -17,8 +18,8 @@ class CategoryController(
 ) {
     @Operation(summary = "카테고리 목록")
     @GetMapping
-    fun getCategories(): SuccessResponse<CategoryResponses> {
-        val categories = categoryQueryService.getCategories()
+    fun getCategories(@RequestParam includeDefaultCategory: Boolean = false): SuccessResponse<CategoryResponses> {
+        val categories = categoryQueryService.getCategories(includeDefaultCategory)
         return SuccessResponse(categories.toResponse())
     }
 }

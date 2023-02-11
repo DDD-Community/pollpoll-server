@@ -19,8 +19,11 @@ class CategoryQueryService(
             ?: throw PollpollException(NOT_FOUND_CATEGORY)
     }
 
-    fun getCategories(): Categories {
+    fun getCategories(includeDefaultCategory: Boolean): Categories {
         val categories = categoryRepository.findAll()
-        return Categories(categories)
+        if (!includeDefaultCategory) {
+            categories.removeIf { it.sequence == 0 }
+        }
+        return Categories(categories.sortedBy { it.sequence })
     }
 }

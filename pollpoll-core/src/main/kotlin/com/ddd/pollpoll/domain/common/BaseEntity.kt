@@ -26,4 +26,8 @@ abstract class BaseEntity {
     fun delete() {
         isDeleted = true
     }
+
+    fun renewUpdatedAt() {
+        updatedAt = LocalDateTime.now()
+    }
 }

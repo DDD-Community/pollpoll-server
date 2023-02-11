@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class PostQueryService(
     private val pollQueryService: PollQueryService,
+    private val postHitsCommandService: PostHitsCommandService,
     private val postRepository: PostRepository,
     private val pollRepository: PollRepository,
     private val pollItemRepository: PollItemRepository,
@@ -77,7 +78,15 @@ class PostQueryService(
         }
     }
 
-    fun getPost(postId: Long): PostPollResponse {
+    @Transactional
+    fun getPost(socialId: String?, postId: Long): PostPollResponse {
+        if (socialId != null) {
+            postHitsCommandService.increase(socialId, postId)
+        }
+        return getPost(postId)
+    }
+
+    private fun getPost(postId: Long): PostPollResponse {
         val postDto = postRepository.getOneById(postId) ?: throw PollpollException(NOT_FOUND_POST)
         val pollDto = pollRepository.getOneByPostId(postId) ?: throw PollpollException(NOT_FOUND_POLL)
         val pollItems = pollItemRepository.findByPollId(pollDto.pollId)

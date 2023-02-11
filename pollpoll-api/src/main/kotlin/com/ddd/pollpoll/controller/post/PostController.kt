@@ -48,8 +48,12 @@ class PostController(
 
     @Operation(summary = "게시글 단건 조회")
     @GetMapping("/{postId}")
-    fun getPost(@PathVariable postId: Long): SuccessResponse<PostPollResponse> {
-        return SuccessResponse(postQueryService.getPost(postId))
+    fun getPost(
+        @RequestHeader(value = "Authorization", required = false) bearerToken: String?,
+        @PathVariable postId: Long
+    ): SuccessResponse<PostPollResponse> {
+        val socialId: String? = if (bearerToken == null) null else getSocialId(bearerToken)
+        return SuccessResponse(postQueryService.getPost(socialId, postId))
     }
 
     @Operation(summary = "게시글 삭제")

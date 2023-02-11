@@ -3,6 +3,7 @@ package com.ddd.pollpoll.config
 import com.ddd.pollpoll.filter.JwtRequestFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -23,10 +24,15 @@ class SecurityConfig(private val jwtRequestFilter: JwtRequestFilter) {
             "/",
         )
 
-        val WHITELIST_HTTP_URL: Array<String> = arrayOf(
+        val WHITELIST_HTTP_URL_FOR_ALL: Array<String> = arrayOf(
             "/api/auth/**",
             "/health",
             "/callback",
+        )
+
+        val WHITELIST_HTTP_URL_FOR_GUEST: Array<String> = arrayOf(
+            "/api/categories",
+            "/api/posts/**",
         )
     }
 
@@ -51,7 +57,8 @@ class SecurityConfig(private val jwtRequestFilter: JwtRequestFilter) {
             .cors() // todo: restrict allow origin
             .and()
             .authorizeRequests()
-            .antMatchers(*WHITELIST_HTTP_URL).permitAll()
+            .antMatchers(*WHITELIST_HTTP_URL_FOR_ALL).permitAll()
+            .antMatchers(HttpMethod.GET, *WHITELIST_HTTP_URL_FOR_GUEST).permitAll()
             .anyRequest().authenticated()
             .and()
             .sessionManagement()

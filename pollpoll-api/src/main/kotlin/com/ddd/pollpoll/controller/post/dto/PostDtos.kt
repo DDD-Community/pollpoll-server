@@ -24,9 +24,10 @@ data class PollItemDto(
 }
 
 data class PollItemResponseDto(
-    val postItemId: Long,
+    val pollItemId: Long,
     val name: String,
     val count: Long,
+    val isPolled: Boolean
 )
 
 data class PostPollResponses(

@@ -4,6 +4,7 @@ import com.ddd.pollpoll.controller.post.dto.PollItemResponseDto
 import com.ddd.pollpoll.controller.post.dto.PopularPostsResponse
 import com.ddd.pollpoll.controller.post.dto.PostPollResponse
 import com.ddd.pollpoll.controller.post.dto.PostPollResponses
+import com.ddd.pollpoll.exception.ErrorCode
 import com.ddd.pollpoll.exception.ErrorCode.NOT_FOUND_POLL
 import com.ddd.pollpoll.exception.ErrorCode.NOT_FOUND_POST
 import com.ddd.pollpoll.exception.PollpollException
@@ -13,6 +14,7 @@ import com.ddd.pollpoll.repository.poll.PollRepository
 import com.ddd.pollpoll.repository.poll.PollWatcherRepository
 import com.ddd.pollpoll.repository.post.PostDto
 import com.ddd.pollpoll.repository.post.PostRepository
+import com.ddd.pollpoll.repository.user.UserRepository
 import com.ddd.pollpoll.service.poll.PollQueryService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,6 +29,7 @@ class PostQueryService(
     private val pollItemRepository: PollItemRepository,
     private val pollParticipantRepository: PollParticipantRepository,
     private val pollWatcherRepository: PollWatcherRepository,
+    private val userRepository: UserRepository
 ) {
     fun getShowMorePosts(lastPostId: Long?, keyword: String?): PostPollResponses {
         val postDtos = postRepository.getListByLastPostIdAndKeyword(lastPostId, keyword)
@@ -83,13 +86,14 @@ class PostQueryService(
         if (socialId != null) {
             postHitsCommandService.increase(socialId, postId)
         }
-        return getPost(postId)
-    }
-
-    private fun getPost(postId: Long): PostPollResponse {
         val postDto = postRepository.getOneById(postId) ?: throw PollpollException(NOT_FOUND_POST)
         val pollDto = pollRepository.getOneByPostId(postId) ?: throw PollpollException(NOT_FOUND_POLL)
-        val pollItems = pollItemRepository.findByPollId(pollDto.pollId)
+        val pollItems = if (socialId == null) {
+            pollItemRepository.findByPollId(pollDto.pollId)
+        } else {
+            val user = userRepository.findBySocialId(socialId) ?: throw PollpollException(ErrorCode.NOT_FOUND_USER)
+            pollItemRepository.findBySocialIdAndPollId(user.id, pollDto.pollId)
+        }
         val participantCount = pollParticipantRepository.countByPollId(pollDto.pollId)
         val pollItemParticipateCounts = pollParticipantRepository.getParticipateCountByPollId(pollDto.pollId)
         val watcherCount = pollWatcherRepository.countByPollId(pollDto.pollId)
@@ -99,9 +103,10 @@ class PostQueryService(
             pollDto,
             pollItems.map {
                 PollItemResponseDto(
-                    it.id,
-                    it.name,
-                    pollItemParticipateCounts.first { el -> el.pollItemId == it.id }.count
+                    pollItemId = it.pollItemId,
+                    name = it.name,
+                    count = pollItemParticipateCounts.first { el -> el.pollItemId == it.pollItemId }.count,
+                    isPolled = it.isPolled
                 )
             },
             participantCount,
@@ -115,9 +120,9 @@ class PostQueryService(
         val endingSoonPostId = postRepository.getEndingSoonPostId()
 
         return PopularPostsResponse(
-            mostParticipatePost = if (mostParticipatePostId == null) null else getPost(mostParticipatePostId),
-            mostWatchPost = if (mostWatchPostId == null) null else getPost(mostWatchPostId),
-            endingSoonPost = if (endingSoonPostId == null) null else getPost(endingSoonPostId),
+            mostParticipatePost = if (mostParticipatePostId == null) null else getPost(null, mostParticipatePostId),
+            mostWatchPost = if (mostWatchPostId == null) null else getPost(null, mostWatchPostId),
+            endingSoonPost = if (endingSoonPostId == null) null else getPost(null, endingSoonPostId),
         )
     }
 }

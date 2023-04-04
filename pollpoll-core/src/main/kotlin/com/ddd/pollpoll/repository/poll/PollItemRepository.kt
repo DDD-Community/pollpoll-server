@@ -7,10 +7,8 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 
 @Repository
-interface PollItemRepository : JpaRepository<PollItem, Long> {
+interface PollItemRepository : JpaRepository<PollItem, Long>, PollItemQueryDslRepository {
     @Modifying
     @Query("update PollItem pi set pi.isDeleted = true where pi.poll.id = :pollId")
     fun softDeleteByPollId(pollId: Long): Int
-
-    fun findByPollId(pollId: Long): List<PollItem>
 }

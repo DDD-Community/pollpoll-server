@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController
 class RootController {
 
     @GetMapping("/health")
-    fun health(): String = "ok"
+    fun health(): String = "ok!"
 
     @GetMapping("/callback")
     fun callback(): String = "ok"

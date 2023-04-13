@@ -4,6 +4,7 @@ import com.ddd.pollpoll.domain.poll.Poll
 import com.ddd.pollpoll.domain.poll.PollItem
 import com.ddd.pollpoll.repository.poll.PollDto
 import com.ddd.pollpoll.repository.post.PostDto
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.ZoneId
 
 data class CreatePostRequest(
@@ -27,6 +28,9 @@ data class PollItemResponseDto(
     val pollItemId: Long,
     val name: String,
     val count: Long,
+
+    @get:JsonProperty("isPolled")
+    @param:JsonProperty("isPolled")
     val isPolled: Boolean
 )
 

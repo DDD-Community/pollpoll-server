@@ -41,9 +41,10 @@ class PostController(
     @GetMapping
     fun getPosts(
         @RequestParam lastPostId: Long?,
-        @RequestParam keyword: String?
+        @RequestParam keyword: String?,
+        @RequestParam categoryId: Long?
     ): SuccessResponse<PostPollResponses> {
-        return SuccessResponse(postQueryService.getShowMorePosts(lastPostId, keyword))
+        return SuccessResponse(postQueryService.getShowMorePosts(lastPostId, keyword, categoryId))
     }
 
     @Operation(summary = "게시글 단건 조회")

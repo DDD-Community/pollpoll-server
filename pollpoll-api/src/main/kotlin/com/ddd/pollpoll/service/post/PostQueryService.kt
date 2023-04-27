@@ -31,8 +31,8 @@ class PostQueryService(
     private val pollWatcherRepository: PollWatcherRepository,
     private val userRepository: UserRepository
 ) {
-    fun getShowMorePosts(lastPostId: Long?, keyword: String?): PostPollResponses {
-        val postDtos = postRepository.getListByLastPostIdAndKeyword(lastPostId, keyword)
+    fun getShowMorePosts(lastPostId: Long?, keyword: String?, categoryId: Long?): PostPollResponses {
+        val postDtos = postRepository.getListByLastPostIdAndKeyword(lastPostId, keyword, categoryId)
         if (postDtos.isEmpty()) {
             return PostPollResponses.empty()
         }

@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 
 interface PostQueryDslRepository {
     fun getOneById(postId: Long): PostDto?
-    fun getListByLastPostIdAndKeyword(lastPostId: Long?, keyword: String?): List<PostDto>
+    fun getListByLastPostIdAndKeyword(lastPostId: Long?, keyword: String?, categoryId: Long?): List<PostDto>
     fun getMyPostsByLastPostIdAndUserId(lastPostId: Long?, userId: Long): List<PostDto>
     fun getParticipatePostsByLastPostIdAndUserId(lastPostId: Long?, userId: Long): List<PostDto>
     fun getWatchPostsByLastPostIdAndUser(lastPostId: Long?, userId: Long): List<PostDto>
@@ -36,12 +36,13 @@ class PostQueryDslRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) :
             .fetchOne()
     }
 
-    override fun getListByLastPostIdAndKeyword(lastPostId: Long?, keyword: String?): List<PostDto> {
+    override fun getListByLastPostIdAndKeyword(lastPostId: Long?, keyword: String?, categoryId: Long?): List<PostDto> {
         return commonQuery()
             .leftJoin(postHits).on(postHits.post.id.eq(post.id))
             .where(
                 if (lastPostId === null) null else post.id.lt(lastPostId),
                 if (keyword === null) null else post.title.contains(keyword),
+                if (categoryId === null) null else category.id.eq(categoryId)
             )
             .groupBy(post.id)
             .orderBy(post.id.desc())

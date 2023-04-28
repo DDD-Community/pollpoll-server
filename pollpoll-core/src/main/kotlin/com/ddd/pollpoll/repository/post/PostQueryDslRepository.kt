@@ -111,7 +111,7 @@ class PostQueryDslRepositoryImpl(private val jpaQueryFactory: JPAQueryFactory) :
             )
             .groupBy(post.id)
             .orderBy(cnt.desc())
-            .fetchOne()
+            .fetchFirst()
     }
 
     override fun getMostWatchPost(): PopularPost? {

@@ -43,11 +43,11 @@ subprojects {
         testImplementation("org.springframework.boot:spring-boot-starter-test")
     }
 
-    tasks.getByName("bootJar") {
+    tasks.bootJar {
         enabled = false
     }
 
-    tasks.getByName("jar") {
+    tasks.jar {
         enabled = true
     }
 

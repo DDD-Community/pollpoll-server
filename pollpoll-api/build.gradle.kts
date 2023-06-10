@@ -1,14 +1,9 @@
-tasks.getByName("bootJar") {
+tasks.bootJar {
     enabled = true
 }
 
-tasks.getByName("jar") {
+tasks.jar {
     enabled = false
-}
-
-tasks.bootJar {
-    val activeProfile: String = System.getProperty("spring.profiles.active") ?: "default"
-    archiveFileName.set("${project.name}-$activeProfile.jar")
 }
 
 dependencies {

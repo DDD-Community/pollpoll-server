@@ -3,11 +3,11 @@ plugins {
     kotlin("plugin.jpa")
 }
 
-tasks.getByName("bootJar") {
+tasks.bootJar {
     enabled = false
 }
 
-tasks.getByName("jar") {
+tasks.jar {
     enabled = true
 }
 

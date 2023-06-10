@@ -6,11 +6,11 @@ name: CI-CD
 on:
   # Triggers the workflow on push or pull request events but only for the "master" branch
   push:
-    branches: [ "master" ]
+    branches: [ "develop" ]
 
 env:
   S3_BUCKET_NAME: pollpoll
-  RESOURCE_PATH: ./pollpoll-api/src/main/resources/application.yml
+  RESOURCE_PATH: ./storage/db-pollpoll/src/main/resources/db-poll.yml
   CODE_DEPLOY_APPLICATION_NAME: pollpoll-code-deploy
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: pollpoll-server
 
@@ -31,6 +31,16 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+
+      - name: Set yaml file
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.RESOURCE_PATH }}
+        env:
+          pollpoll:
+            datasource:
+              username: ${{ secrets.DB_USERNAME }}
+              password: ${{ secrets.DB_PASSWORD }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew

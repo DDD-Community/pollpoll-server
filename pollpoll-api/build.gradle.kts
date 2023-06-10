@@ -6,6 +6,11 @@ tasks.getByName("jar") {
     enabled = false
 }
 
+tasks.bootJar {
+    val activeProfile: String = System.getProperty("spring.profiles.active") ?: "default"
+    archiveFileName.set("${project.name}-$activeProfile.jar")
+}
+
 dependencies {
     // module
     implementation(project(":pollpoll-core"))

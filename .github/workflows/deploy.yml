@@ -33,12 +33,7 @@ jobs:
           java-version: 11
 
       - name: Set yaml file
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: ${{ env.RESOURCE_PATH }}
-        env:
-          pollpoll.datasource.username: ${{ secrets.DB_USERNAME }}
-          pollpoll.datasource.password: ${{ secrets.DB_PASSWORD }}
+        run: echo "${{ secrets.DB_SECRETS }}" > ${{ env.RESOURCE_PATH }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew

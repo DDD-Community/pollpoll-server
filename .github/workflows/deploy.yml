@@ -35,7 +35,7 @@ jobs:
           echo "    overwrite: yes" > ./appspec.yml
           echo "hooks:" > ./appspec.yml
           echo "  ApplicationStart:" > ./appspec.yml
-          echo "    - location: scripts/gh_deploy.sh" > ./appspec.yml
+          echo "    - location: scripts/gh_deploy_dev.sh" > ./appspec.yml
           echo "      timeout: 60" > ./appspec.yml
           echo "      runas: ubuntu" > ./appspec.yml
 

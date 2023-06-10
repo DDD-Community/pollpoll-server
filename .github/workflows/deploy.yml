@@ -29,15 +29,23 @@ jobs:
 
       - name: Set AppSpec file
         run: |
-          echo "files:" > ./appspec.yml
-          echo "  - source:  /" > ./appspec.yml
-          echo "    destination: /home/ubuntu/github_action_dev" > ./appspec.yml
-          echo "    overwrite: yes" > ./appspec.yml
-          echo "hooks:" > ./appspec.yml
-          echo "  ApplicationStart:" > ./appspec.yml
-          echo "    - location: scripts/gh_deploy_dev.sh" > ./appspec.yml
-          echo "      timeout: 60" > ./appspec.yml
-          echo "      runas: ubuntu" > ./appspec.yml
+          if [ ${{ github.ref == 'refs/heads/master' }} ]; then
+            echo "Generating AppSpec file for master branch"
+          elif [ ${{ github.ref == 'refs/heads/develop' }} ]; then
+            echo "Generating AppSpec file for develop branch"
+            echo "files:" > ./appspec.yml
+            echo "  - source:  /" > ./appspec.yml
+            echo "    destination: /home/ubuntu/github_action_dev" >> ./appspec.yml
+            echo "    overwrite: yes" >> ./appspec.yml
+            echo "hooks:" >> appspec.yml
+            echo "  ApplicationStart:" >> ./appspec.yml
+            echo "    - location: scripts/gh_deploy_dev.sh" >> ./appspec.yml
+            echo "      timeout: 60" >> ./appspec.yml
+            echo "      runas: ubuntu" >> ./appspec.yml
+          else
+            echo "Unsupported branch. Skipping deployment."
+            exit 0
+          fi
 
       - name: Set up JDK 11
         uses: actions/setup-java@v1
